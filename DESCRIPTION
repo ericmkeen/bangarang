@@ -15,7 +15,5 @@ Imports:
     swfscMisc (>= 1.0.3)
 License: GPL-2
 LazyData: true
-Suggests: knitr
-VignetteBuilder: knitr
 
 

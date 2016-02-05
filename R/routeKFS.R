@@ -1,0 +1,69 @@
+#' Find shortest path through the Kitimat Fjord System
+#' @description Determines the shortest traveling distance (i.e., swimming distance) between two points 
+#' within the archipelago of the Kitimat Fjord System.
+#' 
+#' @param x1 Longitude of first point (negative decimal degrees)
+#' @param y1 Latitude of first point 
+#' @param x2 Longitude of second point
+#' @param y2 Latitude of second point
+#' @param buffer Passed to \code{\link{LOStest}}. It is the distance (in decimal degrees) to increase the boundaries of shoreline under consideration beyond the range defined by the two points. 
+#' @param show.progress When \code{TRUE} (the default), each travel decision is printed to the console as it happens,
+#' with details on what nodes are being traveled between. 
+#' @param plot.route When \code{TRUE} (the default), a map of the Kitimat Fjord System is shown,
+#' displaying the two points and the path taken between them. Grey dots are the travel nodes used 
+#' to find shortest routes.
+#' @param plot.los Plotting toggle passed to the function \code{\link{LOStest}}. Default is \code{FALSE}. 
+#' When \code{TRUE}, test of line of sight between each decision point is displayed. Good for troubleshooting.
+#' @param print.turns When \code{TRUE} (the default) The coordinates of each turn are printed to the console at the end of the process.
+#' 
+#' @details In beta. An attempt to calculate ecologically relevant distances between locations in the Kitimat Fjord System. 
+#' @return Returns a single numeric value, the shortest possible swimming distance (km) between the two given points. 
+#' @seealso \code{\link{whalemap}}, \code{\link{LOStest}}, \code{\link{solve2lines}}
+#' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 
+#' @examples
+#' ############ How far from Caamano Sound to Amy Point?
+#' x1 <- -129.4 # Caamano Sound
+#' y1  <- 52.9 
+#' x2 <- -129.006958 # Amy Pt, north tip of Gribbell
+#' y2 <- 53.53864484 
+#' routeKFS(x1,y1,x2,y2) # Find distance
+#' ############
+#' ############ How far from Glide Island to Bishop Bay?
+#' x1 <- -128.8489429 # Glide Island:
+#' y1  <- 53.47139178
+#' x2 <- -129.48349 # Bishop Bay:
+#' y2 <- 53.01519634 
+#' routeKFS(x1,y1,x2,y2) # Find distance
+#' ############
+#' ############ A straight-shot case: South Douglas to Central Wright
+#' ############ No maps or printing:
+#' x1 <- -129.2 # Near Hartley Bay
+#' y1  <- 53.35 
+#' x2 <-  -129.22890579  # Wright Sound
+#' y2 <-  53.41901713 
+#' routeKFS(x1,y1,x2,y2,plot.route=FALSE,show.progress=FALSE,print.turns=FALSE) # Find distance
+#' ############
+#' ############ Threading the Casanave needle: Loredo to Leading Pt
+#' x1 <- -129.19 # Loredo
+#' y1  <- 52.84
+#' x2 <-  -129.15 # Leading Pt
+#' y2 <-  53.25 
+#' routeKFS(x1,y1,x2,y2) # Find distance
+
+
+routeKFS <- function(x1,y1,x2,y2,
+                    buffer=.01,
+                    show.progress=TRUE,
+                    plot.route=TRUE,
+                    plot.los=FALSE,
+                    print.turns=TRUE){
+  pts.ocean <- list(c(x1,y1),c(x2,y2))
+  turns <- ocean.route(pts.ocean,buffer=buffer,LOSplots=plot.los,show.progress=show.progress)
+  OD <- calc.OD(turns)
+  if(print.turns){print(turns)}
+  if(plot.route){plot.OD(turns)}
+  return(OD)
+}
+
+#####################################################################
+#####################################################################
