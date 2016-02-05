@@ -17,6 +17,7 @@ addturn <- function(currentnode){
 #' @describeIn addturn Determine node closest to end destination 
 #' 
 closest2end <- function(startpt,endpt,nextnodes,nodepts){
+  library(swfscMisc)
   # Which of a set of candidate LOS nodes are nearest the end destination?
   startdists <- enddists <- bearings <- vector()
   xstart <- startpt[1]
@@ -109,6 +110,7 @@ dist2nodes <- function(pt1,pt2){
 
 find.unusables <- function(currentID,currentnode,endpt,nextnodes,nodepts){
   # Function: find.unusables
+  library(swfscMisc)
   currentdist <- dist2nodes(currentnode,endpt)
   nextdists <- vector()
   for(i in 1:length(nextnodes)){

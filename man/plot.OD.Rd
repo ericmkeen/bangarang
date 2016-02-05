@@ -4,7 +4,7 @@
 \alias{plot.OD}
 \title{Map travel route computed by routeKFS}
 \usage{
-\method{plot}{OD}(turns)
+plot.OD(turns)
 }
 \description{
 Map travel route computed by routeKFS

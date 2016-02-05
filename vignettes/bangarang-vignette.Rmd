@@ -1,0 +1,299 @@
+---
+title: "Bangarang: a package for R"
+author: "Eric M. Keen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Bangarang}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+```{r,echo=FALSE}
+vigdir <- "/Users/eric.keen/Dropbox/Bangarang Docs/R Bangarang/packages/bangarang/vignettes"
+Rdir <- "/Users/eric.keen/Dropbox/Bangarang Docs/R Bangarang/packages/bangarang/R"
+datadir <- "/Users/eric.keen/Dropbox/Bangarang Docs/R Bangarang/packages/bangarang/data"
+setwd(Rdir)
+source("whalemap.R")
+source("plotKFS.R")
+source("solve2lines.R")
+source("routeKFS.R")
+source("LOStest.R")
+source("plotOD.R")
+source("calcOD.R")
+source("oceandistance.R")
+source("helperfunctions.R")
+setwd(datadir)
+data(shiplane)
+setwd(vigdir)
+```
+
+# Overview
+**bangarang** is a collection of R functions and datasets useful for the analysis of survey and oceanography data in the Kitimat Fjord System, British Columbia (Gitga'at First Nation marine territory), though some functions are applicable to the northeast Pacific coast in general. Developed for the Bangarang Project but generalized for use by the Gitga'at Oceanographic Initiative, NCCS, DFOs and others.
+
+#### Required packages
+These should install automatically with installation of **bangarang**. If for some reason they do not, they are avaiable on CRAN:
+
+* PBSmapping
+
+* swfscMisc
+
+***
+
+# Primary Packages
+
+## plotKFS
+*Maps for the Kitimat Fjord System*
+
+Mapping functions in the Kitimat Fjord System tailored to research needs of the Bangarang, Gitga'at, and NCCS teams. Highly customizable, outputs a map only (no data printed).
+
+### Examples
+(More available in the R help file)
+```{r plotKFS-eg1,fig.height=8,fig.width=6,message=FALSE}
+# Research headquarters
+plotKFS(places=TRUE,places.scale=1.5)
+```
+
+###Datasets
+This function calls on 7 datasets:
+
+**stations**: Oceanographic stations of the Bangarang Project. A dataset containing the names, locations, and plotting details of oceanographic stations and transet turning points of the Bangarang study plan.
+
+**shiplane**: A dataframe of coordinates that trace a proposed shipping lane in the Kitimat Fjord System, from Kitimat out to sea. A data frame with 137 rows and 4 columns, formatted for seamless mapping with the PBSmapping package.
+
+**blocks**: Boundaries for geographic block schemes in Bangarang analyses. A dataset containing the names, locations, and plotting details of oceanographic stations and transet turning points of the Bangarang study plan.
+
+**waterpolygons**: Polygons of shoreline coordinates delineating 54 geographic subblocks in the Kitimat Fjord System. A dataframe of coordinates for the mapping 54 geographic miniblocks used to partition the Kitimat Fjord System in Bangarang analyses.
+
+**subblocks**: A dataframe of coordinates for mapping 26 geographic blocks used to partition the Kitimat Fjord System in Bangarang analyses. A data frame with 483,287 rows and 5 columns, formatted for seamless mapping with the PBSmapping package.
+
+**channels**: Polygons of coordinates delineating 8 geographic channels. A dataframe of coordinates for mapping the 8 geographic blocks used to partition the Kitimat Fjord System in Bangarang analyses.
+
+**provinces**: Polygons of coordinates delineating 4 geographic provinces
+A dataframe of coordinates for mapping the 4 geographic regions ("provinces") used to partition the Kitimat Fjord System in Bangarang analyses.
+
+### Subsidiary functions
+None.
+
+***
+
+## whalemap
+*Find true position of sighting*
+
+Calculates the true position of a sighting in the northeast Pacific, in offshore or confined coastal waters. Requires input of survey data typical of line transect surveys:
+
+* `X`  Observer longitude (decimal degrees, where W is negative, e.g. -129.3 for the Kitimat Fjord System).
+* `Y` Observer latitude (decimal degrees).
+* `bearing` Magnetic bearing to sighting, in degrees. This is true bearing, not referenced to the vessel's heading.
+* `reticle` Reticle reading (must be positive). 
+* `eye.height` Height above sea level of observer's eyes, in meters.
+* `vessel.hdg` The vessel's heading at the time of the sighting (Optional). It is assumed this information is taken from a GPS, and therefore no magnetic declination correction is applied to it. If provided, trackline distance to the sighting will be calculated, which assumes that the vessel is headed along the trackline at the time of sighting.
+* `deg.per.ret` Reticle-to-degree conversion. Default is 0.279, which is specific to Fujinon 7x50 binocs (see references).  On the RV Bangarang, we treated a full reticle as the distance betweenlong and short reticle lines in the optic of our Fujinon FMTRC-SX 7x50 binocs (after Kinzey and Gerrodette 2001). This value needs to replaced with the correct conversion for the optics you use.
+* `mag` Magnetic declination, in degrees, used to correct bearing readings from your magnetic compass. Default is -18.25 deg, which is the approximate declination in the Kitimat Fjord System, British Columbia.
+* `toplot` When `TRUE` (not the default), a map will be generated that shows the process at work.
+
+This function can work offshore or within confined coastal zones, as tests to see whether the reticle reading is referenced to the horizon or to shore. Also calculates the trackline distance of the sighting, if vessel heading is provided, for use in distance sampling analysis. 
+
+#### References
+- Kinzey, D. and Gerrodette, T. 2001. Conversion factors for binocular reticles. Mar. Mammal Sci. 17(2):353-61.
+- Lerczak, J.A. and Hobbs, R.C. 1998. Calculating sighting distances from angular readings during shipboard, aerial, and shore-based marine mammal surveys. Mar. Mammal Sci. 14(3):590-9. [See Errata. 1998. Mar. Mammal Sci. 14(4):903]. 
+
+#### Output 
+Returns a list with the following elements:
+
+1. '`X`: X of animal
+
+2. `Y`: Y of animal 
+
+3. `radial.dist`  Distance from observer to animal, in km (radial distance)
+
+4. `boundary`  Reference boundary used ("shore" or "horizon")
+
+5. `boundary.dist`  Observer's distance to boundary, in km
+
+6. `perp.dist1` Trackline distance to sighting, in km (if vessel heading was provided). Ignores 
+curvature of the earth.
+
+7. `track.bearing` Difference between sighting bearing and vessel heading, in degrees (simple subtraction)
+
+If `topot=TRUE` (not the DEFAULT), the function also generates a map key of the process (key provided in the help file).
+
+### Examples
+(More available in the R help file)
+
+```{r whalemap-eg1,fig.height=5,fig.width=4,message=FALSE}
+###### SHORE EXAMPLE ######
+# You are on your way to Cameron Cove 
+# and see a whale in Taylor Bight:
+whalemap(-129.21,53.0855,
+         bearing=60,
+         reticle=.1,
+         eye.height=3.46,
+         vessel.hdg=90,
+         toplot=TRUE)
+```
+
+```{r whalemap-eg2,fig.height=5,fig.width=4,message=FALSE}
+### HORIZON EXAMPLE ###############
+# You are on your way back from the Wall 
+# and you see the bubble net group!
+whalemap(X=-129.35577392578125,
+          Y=52.860217383433515,
+          bearing=14,
+          reticle=.01,
+          eye.height=3.46,
+          vessel.hdg=45,
+          toplot=TRUE)  
+```
+
+###Datasets
+None.
+
+### Subsidiary functions
+solve2lines
+
+***
+
+## routeKFS
+*Find shortest path through the Kitimat Fjord Systems*
+
+Determines the shortest traveling distance (i.e., swimming distance) between two points 
+within the archipelago of the Kitimat Fjord System. A way of estimating ecologically relevant distances between locations in the Kitimat Fjord System.
+
+###Inputs
+* `x1` Longitude of first point (negative decimal degrees)
+* `y1` Latitude of first point 
+* `x2` Longitude of second point
+* `y2` Latitude of second point
+* `buffer` Passed to function `LOStest`. It is the distance (in decimal degrees) to increase the boundaries of shoreline under consideration beyond the range defined by the two points. 
+show.progress When `TRUE` (the default), each travel decision is printed to the console as it happens, with details on what nodes are being traveled between. 
+* `plot.route` When `TRUE` (the default), a map of the Kitimat Fjord System is shown, displaying the two points and the path taken between them. Grey dots are the travel nodes used to find shortest routes.
+* `plot.los` Plotting toggle passed to the function `LOStest`. Default is `FALSE`. When `TRUE`, test of line of sight between each decision point is displayed. Good for troubleshooting.
+* `print.turns` When `TRUE` (the default) The coordinates of each turn are printed to the console at the end of the process.
+
+###Outputs
+Returns a single numeric value, the shortest possible swimming distance (km) between the two given points. 
+
+###Details
+This function relies on a network of "travel nodes" that I placed in the Kitimat Fjord System at critical locations. I tried to use the minimum number of travel nodes possible, so sometimes routes are not truly the most efficient straight line patch between two points (see Glide Island to Bishop Bay example below), but it is way better than nothing (and let's face it, the animals are taking the most direct path either). To explain the process, let's imagine a whale is trying to travel from Caamano Sound to the north tip of Gribbell Island (first example below).
+
+The process begins by determining which travel node is the appropriate "first" and "last" step of the whale's travel sequence. This is the step of the process that is most susceptible to error, because the chosen starting node can't simply be the node closest to the whale; it has to be within line-of-sight of the whale, it has to get the whale closer to the ending point, but it cannot take the whale in an inefficient direction, and it has to achieve all these things better than other nearby nodes. Same for the "ending" node. But once those two nodes are chosen, the process is computationally simple, because I have built several "keys" to take over the decision process from hereon.
+
+Each travel node as an ID:
+
+<img src="travel-nodes.pdf" width="500px" />
+
+```{r,echo=FALSE}
+# ![My Figure](travel-nodes.pdf)
+#pdf(file="travel-nodes.pdf",height=8,width=5.5)
+#plotKFS()
+#data(nodesraw)
+#nodes <- as.EventData(nodesraw)
+#addPoints(nodes,pch=16,cex=.25,col="cadet blue")
+#addPoints(nodes,pch=1,cex=.75,col="cadet blue")
+#text(x=(nodes$X+.02),y=nodes$Y,labels=nodes$EID,cex=.75)
+#dev.off
+```
+
+Using the keys I have compiled, I can take the IDs of the starting and ending nodes and determine...a) which geographic blocks are the most efficient routes between them, b) which other nodes are within their line-of-sight, and c) the most important key of all, the most efficient "next step" to take in order to get from the starting node to the ending node. After each step is taken (and recorded), the "next steps" key is referred to again for the new combination of nodes. This process is repeated until the whale reaches a node that is within line of sight of the ending node. The distances between each step are totalled up and reported. 
+
+### Examples
+(More available in the R help file)
+
+```{r routeKFS-eg1,message=FALSE}
+#' ############ How far from Caamano Sound to Amy Point?
+#x1 <- -129.4 # Caamano Sound
+#y1  <- 52.9 
+#x2 <- -129.006958 # Amy Pt, north tip of Gribbell
+#y2 <- 53.53864484 
+#routeKFS(x1,y1,x2,y2) # Find distance
+#' ############
+```
+<img src="routeKFS-eg1.pdf" width="300px" />
+
+
+```{r routeKFS-eg2,message=FALSE}
+#' ############ How far from Glide Island to Bishop Bay?
+# x1 <- -128.8489429 # Glide Island:
+# y1  <- 53.47139178
+# x2 <- -129.48349 # Bishop Bay:
+# y2 <- 53.01519634 
+# routeKFS(x1,y1,x2,y2) # Find distance
+#' ############
+```
+<img src="routeKFS-eg2.pdf" width="300px" />
+
+
+```{r routeKFS-eg4,message=FALSE}
+#' ############ Threading the Casanave needle: Loredo to Leading Pt
+# x1 <- -129.19 # Loredo
+# y1  <- 52.84
+# x2 <-  -129.15 # Leading Pt
+# y2 <-  53.25 
+# routeKFS(x1,y1,x2,y2) # Find distance
+```
+<img src="routeKFS-eg4.pdf" width="300px" />
+
+
+###Datasets
+**Network of travel nodes**: The primary reference for the location and ID of each travel node, the coordinate network used in the routeKFS pathfinding functions.
+
+**deadendkey**: A symmetrical dataframe that lists the potentially viable channels to travel through for a given combination starting point (row name) and ending point (column name). If there are multiple viable channels, they are separated by a "-". Used behind the scenes in the routeKFS functions. The data frame has 13 rows and 14 columns (the first column is row.names). Row and column names are the same, and correspond to channels in the Kitimat Fjord System as they are partitioned in Bangarang analyses: caa, est, cmp, ash, ssq, nsq, wha, lew, wri, dug, mck, ver, bish
+
+**LOSmatrix**: A symmetrical dataframe that reports the line-of-sight status (yes or no) for every pairwise combination of travel nodes (n=93) in the dataset nodesraw. This symmetrical data frame (93 rows x 93 columns) has the same names for rows and columns, and these names correspond to the travel node ID number in dataset nodesraw. If travel nodes i and j are line-of-sight (LOS), then cells [i,j] and [j,i] are 1. If they are not LOS, these cells have 0.
+
+**FirstSteps**: A symmetrical dataframe (93 rows x 94 columns (col1 is rownames)) that reports the first step to take when traveling the straightest possible path between nodes in the network of travel nodes laid out in the Kitimat Fjord System in the dataset nodesraw. Row and column names correspond to travel node ID number in dataset nodesraw. Cell [i,j] reports which node to travel to next in order to get from node i to node j. If the nodes are line-of-sight of each other, their cell is marked with a lower case "x".
+
+###Subsidiary functions
+
+`LOStest(pts.ocean,buffer=.01,toplot=TRUE)`
+
+Line-of-Sight test for two water locations. It determines whether land is obstructing a direct path between two pairs of ocean coordinates. A test function used frequently throughout the `routeKFS` function, but can be used on its own for any part of the northeast Pacific coastline (Oregon to Alaska). The function takes a shoreline dataset from the package `PBSmapping`, and explores nearby shoreline vertices (in pairs) to see if the line connecting them intersectswith a straight path between the two ocean points in question. Then, if the solution of the two lines is contained with a box that bounds the two shoreline vertices, the function concludes that the shore must be obstructing line of sight.
+
+**Inputs:**
+* `pts.ocean`: A list containing two coordinate pairs. Format: `list(c(X1,Y1),c(X2,Y2))`.
+* `buffer`: Distance (in decimal degrees) to increase the boundaries of shoreline under consideration beyond the range defined by the two points. 
+* `toplot`: If `TRUE` (the default), then two plot will be generated to show the process. 
+The top plot is a "context" plot showing the two points.  The bottom plot is a zoom of the two points. A blue line connects them, and the green line along the shore indicates shoreline coordinates that have been tested for line-of-sight obstruction. When an obstruction has been found, a circle marks the shoreline intersection point (corresponding to element two of returned list).
+
+**Output**: Returns a two element list. The first list is a Boolean: If `TRUE`, then the two points are indeed line-of-sight with no shore obstructions. If `FALSE`, then the land is obstructing the most direct path between the points. The second element in the list is a 2-element vector, the X and Y of the intersection point with shore. This vector is `c(NA,NA)` when the two points are line of sight.
+
+***
+
+`ocean.distance(pts.ocean,buffer=.01, LOSplots=FALSE,show.progress=TRUE)`
+Primary function for routeKFS process - steps from starting point to ending point along network of travel nodes.
+
+***
+
+`calc.OD(turns)`
+Calculated total travel distance in a dataframe of turns
+
+***
+
+`plot.OD(turns)`
+Map travel route computed by routeKFS
+
+***
+
+`addturn(currentnode)`
+Add a turning point to the dataframe of turns in a travel sequence
+
+***
+
+`closest2end(startpt,endpt,nextnodes,nodepts)`
+Determine node closest to end destination 
+
+***
+
+`find.LOS.nodes(node,nodepts,toprint=TRUE)`
+Determine which nodes are line-of-sight of a point 
+
+***
+
+`dist2nodes(pt1,pt2)`
+Calculated distance between two nodes
+
+***
+
+`find.unusables(currentID,currentnode,endpt,nextnodes,nodepts)`
+Eliminate potential nodes based on their distance from the current node
+

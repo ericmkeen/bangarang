@@ -14,6 +14,8 @@ whalemap(X, Y, bearing, reticle, eye.height, vessel.hdg = NA, mag = -18.25,
 
 \item{bearing}{Magnetic bearing to sighting, in degrees. This is true bearing, not referenced to the vessel's heading.}
 
+\item{reticle}{Reticle reading (must be positive). #'}
+
 \item{eye.height}{Height above sea level of observer's eyes, in meters.}
 
 \item{vessel.hdg}{The vessel's heading at the time of the sighting (Optional). It is assumed this information is
@@ -32,8 +34,6 @@ long and short reticle lines in the optic of our Fujinon FMTRC-SX 7x50 binocs
 This value needs to replaced with the correct conversion for the optics you use.}
 
 \item{toplot}{When TRUE (not the default), a map will be generated that shows the process at work.}
-
-\item{Reticle}{reading (must be positive). #'}
 }
 \value{
 Returns a list with the following elements:

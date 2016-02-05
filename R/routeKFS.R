@@ -16,7 +16,7 @@
 #' When \code{TRUE}, test of line of sight between each decision point is displayed. Good for troubleshooting.
 #' @param print.turns When \code{TRUE} (the default) The coordinates of each turn are printed to the console at the end of the process.
 #' 
-#' @details In beta. An attempt to calculate ecologically relevant distances between locations in the Kitimat Fjord System. 
+#' @details An (imperfect) calculation of ecologically relevant distances between locations in the Kitimat Fjord System. 
 #' @return Returns a single numeric value, the shortest possible swimming distance (km) between the two given points. 
 #' @seealso \code{\link{whalemap}}, \code{\link{LOStest}}, \code{\link{solve2lines}}
 #' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 

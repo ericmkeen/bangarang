@@ -12,6 +12,7 @@ ocean.route <- function(pts.ocean,
   # Find the route between two ocean pts
   ############################################################################
   ############################################################################
+  library(swfscMisc)
   ### LOAD DECISION POINTS
   data(nodesraw)
   data(nodesLOSmatrix)

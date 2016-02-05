@@ -38,7 +38,7 @@ Determines the shortest traveling distance (i.e., swimming distance) between two
 within the archipelago of the Kitimat Fjord System.
 }
 \details{
-In beta. An attempt to calculate ecologically relevant distances between locations in the Kitimat Fjord System.
+An (imperfect) calculation of ecologically relevant distances between locations in the Kitimat Fjord System.
 }
 \examples{
 ############ How far from Caamano Sound to Amy Point?

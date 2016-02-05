@@ -1,0 +1,20 @@
+#' Oceanographic stations of the Bangarang Project
+#'
+#' A dataset containing the names, locations, and plotting details of oceanographic stations and transet
+#' turning points of the Bangarang study plan.
+#'
+#' @format A data frame with 106 rows and 11 columns:
+#' \describe{
+#'   \item{X}{Sequential identifier}
+#'   \item{block}{Geographic block of the station}
+#'   \item{sta}{Station ID}
+#'   \item{mode}{The research mode during which oceanographic sampling is done at this station. 
+#'   This is a relic of the 2013 study design. "stout" referred to the most rigorous sampling effort. 
+#'   "lite" stations were sampled in all research modes -- these are the stations we used in 2014-5.}
+#'   ...
+#' }
+#' Disregard the distance columns -- they may not be accurate.
+#' @source Written and compiled by Eric Keen
+
+"stations"
+

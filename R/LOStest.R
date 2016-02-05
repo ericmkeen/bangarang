@@ -37,6 +37,7 @@ LOStest <- function(pts.ocean,
                     toplot=TRUE){  
   # Line Of Sight (LOS) test between two coordinate pairs
   library(PBSmapping) ; data(nepacLLhigh)
+  library(swfscMisc)
   
   # Plot the two points
   pt1 <- pts.ocean[[1]]

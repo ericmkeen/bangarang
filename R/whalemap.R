@@ -3,7 +3,7 @@
 #' @param X  Observer longitude (decimal degrees, where W is negative, e.g. -129.3 for the Kitimat Fjord System).
 #' @param Y Observer latitude (decimal degrees).
 #' @param bearing Magnetic bearing to sighting, in degrees. This is true bearing, not referenced to the vessel's heading.
-#' @param Reticle reading (must be positive). #' @param eye.height Height above sea level of observer's eyes, in meters.
+#' @param reticle Reticle reading (must be positive). #' @param eye.height Height above sea level of observer's eyes, in meters.
 #' @param vessel.hdg The vessel's heading at the time of the sighting (Optional). It is assumed this information is 
 #' taken from a GPS, and therefore no magnetic declination correction is applied to it. 
 #' If provided, trackline distance to the sighting will be calculated, which assumes that the vessel is
