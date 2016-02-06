@@ -20,9 +20,9 @@ NCCS, DFOs and others.
 
 The primary functions in this package are:
 \describe{
-\item{\code{plotKFS}}{Mapping tools}
-\item{\code{whalemap}}{Locating a whale in confined channels based on survey data}
-\item{\code{routeKFS}}{Travel distance between two points in the fjord system (around islands)}
+\item{\code{\link{plotKFS}}}{Mapping tools}
+\item{\code{\link{whalemap}}}{Locating a whale in confined channels based on survey data}
+\item{\code{\link{routeKFS}}}{Travel distance between two points in the fjord system (around islands)}
 }
 }
 
@@ -31,8 +31,8 @@ The primary functions in this package are:
 There are some secondary functions used by these primaries,
 and they may be useful in and of themselves:
 \describe{
-\item{\code{solve2lines}}{Determine the intersection point of two lines}
-\item{\code{LOStest}}{Determine whether two points are within line-of-sight
+\item{\code{\link{solve2lines}}}{Determine the intersection point of two lines}
+\item{\code{\link{LOStest}}}{Determine whether two points are within line-of-sight
 of each other or whether the shoreline is in the way}
 }
 }
@@ -42,14 +42,14 @@ of each other or whether the shoreline is in the way}
 These functions also have small helper functions that
 probably don't have a use otherwise or on their own:
 \describe{
-\item{\code{calcOD}}{in \code{routeKFS}}
-\item{\code{addturn}}{in \code{routeKFS}}
-\item{\code{closest2end}}{in \code{routeKFS}}
-\item{\code{find.LOS.nodes}}{in \code{routeKFS}}
-\item{\code{dist2nodes}}{in \code{routeKFS}}
-\item{\code{find.unusables}}{in \code{routeKFS}}
-\item{\code{oceandistance}}{in \code{routeKFS}}
-\item{\code{plotOD}}{in \code{routeKFS}}
+\item{\code{\link{calcOD}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{addturn}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{closest2end}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{find.LOS.nodes}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{dist2nodes}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{find.unusables}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{oceandistance}}}{in \code{\link{routeKFS}}}
+\item{\code{\link{plotOD}}}{in \code{\link{routeKFS}}}
 }
 }
 \author{

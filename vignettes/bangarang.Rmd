@@ -4,7 +4,7 @@ author: "Eric M. Keen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Bangarang}
+  %\VignetteIndexEntry{bangarang}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
