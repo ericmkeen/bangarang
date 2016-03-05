@@ -17,7 +17,8 @@
 #' @param print.turns When \code{TRUE} (the default) The coordinates of each turn are printed to the console at the end of the process.
 #' 
 #' @details An (imperfect) calculation of ecologically relevant distances between locations in the Kitimat Fjord System. 
-#' @return Returns a single numeric value, the shortest possible swimming distance (km) between the two given points. 
+#' @return Returns a two-element list: [[1]] the shortest possible swimming distance (km) between the two given points, and 
+#' [[2]] the dataframe of turns with column names X and Y. 
 #' @seealso \code{\link{whalemap}}, \code{\link{LOStest}}, \code{\link{solve2lines}}
 #' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 
 #' @examples
@@ -62,7 +63,7 @@ routeKFS <- function(x1,y1,x2,y2,
   OD <- calc.OD(turns)
   if(print.turns){print(turns)}
   if(plot.route){plot.OD(turns)}
-  return(OD)
+  return(list(OD,turns))
 }
 
 #####################################################################
