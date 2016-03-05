@@ -12,6 +12,10 @@ To install the latest version of this R package from this GitHub website, copy t
 if (!require('devtools')) install.packages('devtools')
 # install from GitHub
 devtools::install_github('ericmkeen/bangarang')
+# Load to library
+library(bangarang)
+# Explore help files and their examples
+?bangarang
 ```
 ###Contact
 Eric Keen, Scripps Institution of Oceanography
