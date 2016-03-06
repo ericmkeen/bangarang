@@ -33,7 +33,7 @@
 #####################################################################
 #####################################################################
 LOStest <- function(pts.ocean,
-                    buffer=.01,
+                    buffer=.025,
                     toplot=TRUE){  
   # Line Of Sight (LOS) test between two coordinate pairs
   library(PBSmapping) ; data(nepacLLhigh)
@@ -51,8 +51,11 @@ LOStest <- function(pts.ocean,
   pts.ocean <- list(c(X[1],Y[1]),c(X[2],Y[2])) # format for line solving
   
   # Determine bounds of area encompassed by two points
-  xlims=c((min(X,na.rm=TRUE)-buffer),(max(X,na.rm=TRUE)+buffer))
-  ylims=c((min(Y,na.rm=TRUE)-buffer),(max(Y,na.rm=TRUE)+buffer))
+  xlimraw=c((min(X,na.rm=TRUE)),(max(X,na.rm=TRUE)))
+  ylimraw=c((min(Y,na.rm=TRUE)),(max(Y,na.rm=TRUE)))
+  
+  xlims=c(xlimraw[1]-buffer,xlimraw[2]+buffer)
+  ylims=c(ylimraw[1]-buffer,ylimraw[2]+buffer)
   
   if(toplot){
     # Study area context
@@ -102,21 +105,27 @@ LOStest <- function(pts.ocean,
         Xsolved <- solved[1]
         Ysolved <- solved[2]
         
-        # Test to see if solution is within bounding rectangle of 2 shore points
         # If solution is within range and finite, LOS=FALSE
         if(is.finite(Xsolved) & is.finite(Ysolved)){
+          # Account for horizontal or vertical lines in pts.ocean
+          if(diff(range(xlimraw))==0){xlimraw[1] <- xlimraw[1]-.005 ; xlimraw[2] <- xlimraw[2]+.005} 
+          if(diff(range(ylimraw))==0){ylimraw[1] <- ylimraw[1]-.005 ; ylimraw[2] <- ylimraw[2]+.005}
+          # Account for horizontal or vertical lines in pts.shore
           shore.xlims = c(min(Xshore,na.rm=TRUE),max(Xshore,na.rm=TRUE))
           shore.ylims = c(min(Yshore,na.rm=TRUE),max(Yshore,na.rm=TRUE))
-          # Account for horizontal or vertical lines
           if(diff(range(shore.xlims))==0){shore.xlims[1] <- shore.xlims[1]-.005 ; shore.xlims[2] <- shore.xlims[2]+.005} 
           if(diff(range(shore.ylims))==0){shore.ylims[1] <- shore.ylims[1]-.005 ; shore.ylims[2] <- shore.ylims[2]+.005}
-          
-          if(Xsolved >= shore.xlims[1] & Xsolved <= shore.xlims[2] &
+          # Test to see if solution within bounding rectangle of 2 ocean pts
+          if(Xsolved>=xlimraw[1] & Xsolved<=xlimraw[2] &
+             Ysolved>=ylimraw[1] & Ysolved<=ylimraw[2]){
+            # Test to see if solution is within bounding rectangle of 2 shore points
+            if(Xsolved >= shore.xlims[1] & Xsolved <= shore.xlims[2] & 
                Ysolved >= shore.ylims[1] & Ysolved <= shore.ylims[2]){
-            LOS <- FALSE
-            intersection <- c(Xsolved,Ysolved)
+              LOS <- FALSE ; i
+              intersection <- c(Xsolved,Ysolved)
+            }
           }
-        }
+       }
         
         # If this is the intersection point, plot it
         if(!LOS & toplot){
@@ -128,7 +137,7 @@ LOStest <- function(pts.ocean,
       } # end of if(LOS)
     } # end of for loop
     
-  } # End of if(nrow(nearbyshore)>0)
+  } # End of if(nrow(nearbyshore)>1)
   
   if(LOS){intersection <- c(NA,NA)}
   par(mfrow=c(1,1))

@@ -5,7 +5,7 @@
 ############################################################################
 ### OCEAN DISTANCE
 ocean.route <- function(pts.ocean,
-                  buffer=.01,
+                  buffer=.025,
                   LOSplots=FALSE,
                   show.progress=TRUE){
   ############################################################################
@@ -138,7 +138,7 @@ ocean.route <- function(pts.ocean,
             
             # LOS test to make sure this node isn't LOS with node.end
             pts.test <- list(node.end,currentnode)
-            test2 <- LOStest(pts.test,buffer=.005,toplot=FALSE)[[1]]
+            test2 <- LOStest(pts.test,buffer=buffer,toplot=FALSE)[[1]]
             if(test2){currentLOS <- TRUE}
           } # end of if nextstep==x
         } # end of if !currentLOS
