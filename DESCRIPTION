@@ -11,6 +11,7 @@ Description: Miscellaneous analysis and mapping tools for marine research in
     Developed for the Bangarang Project but generalized for use by the 
     Gitga'at Oceanographic Initiative, NCCS, DFOs and others.
 Imports: 
+    ggplot2,
     PBSmapping (>= 2.67.60),
     swfscMisc (>= 1.0.3)
 License: GPL-2
