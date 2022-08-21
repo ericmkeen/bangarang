@@ -4,10 +4,25 @@
 \alias{gg_kfs}
 \title{`ggplot()` of the Kitimat Fjord System}
 \usage{
-gg_kfs(lat_range = c(52.8, 53.55), lon_range = c(-129.68, -128.85))
+gg_kfs(
+  lat_range = c(52.8, 53.55),
+  lon_range = c(-129.68, -128.85),
+  land_fill = "darkslategrey",
+  land_alpha = 0.2,
+  water_fill = "lightblue",
+  water_alpha = 0.1
+)
 }
 \arguments{
 \item{lat_range}{Two-element vector of latitudinal range}
+
+\item{land_fill}{Land fill color}
+
+\item{land_alpha}{Land fill alpha}
+
+\item{water_fill}{Water fill color}
+
+\item{water_alpha}{Water fill alpha}
 
 \item{long_range}{Two-element vector of longitudinal range}
 }
