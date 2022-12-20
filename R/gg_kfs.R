@@ -34,9 +34,8 @@ gg_kfs <- function(lat_range = c(52.8, 53.55),
                      alpha=land_alpha,
                      color='grey30', 
                      lwd=.25) +
-    ggplot2::ylim(lat_range[1], lat_range[2]) + 
-    ggplot2::xlim(lon_range[1], lon_range[2]) + 
-    ggplot2::coord_sf() + 
+    ggplot2::coord_sf(ylim=lat_range,
+                      xlim=lon_range) + 
     ggplot2::theme_light() + 
     theme(panel.background = element_rect(fill = adjustcolor(water_fill, alpha.f=water_alpha),
                                           #colour = "lightblue",

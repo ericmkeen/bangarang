@@ -1,15 +1,15 @@
 Package: bangarang
 Type: Package
 Title: Bangarang data tools for the Kitimat Fjord System
-Version: 1.1.0
+Version: 1.2.0
 Date: 2016-02-03
 Authors@R: person("Eric", "Keen", email="ekeen@ucsd.edu",role=c("aut","cre"))
 Maintainer: Eric Keen <ekeen@ucsd.edu>
-Description: Miscellaneous analysis and mapping tools for marine research in 
+Description: Miscellaneous utilities for marine research in 
     the Kitimat Fjord System, British Columbia (Gitga'at First Nation marine territory), 
     though some functions are applicable to the northeast Pacific coast in general. 
     Developed for the Bangarang Project but generalized for use by the 
-    Gitga'at Oceanographic Initiative, NCCS, DFOs and others.
+    Gitga'at Oceanographic Initiative, BC Whales, DFO, and others.
 Imports: 
     ggplot2,
     PBSmapping (>= 2.67.60),

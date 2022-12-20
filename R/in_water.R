@@ -12,7 +12,8 @@ in_water <- function(xy,
   #xy <- whale_sightings
   
   data('kfs_land')
-  xy <- mri
+  mri <- xy
+  #xy <- mri
   mri <- mri[!is.na(mri$x) & !is.na(mri$y),] ; nrow(mri)
   x <- mri$x
   y <- mri$y
