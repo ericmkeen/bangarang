@@ -8,6 +8,7 @@
 #' taken from a GPS, and therefore no magnetic declination correction is applied to it. 
 #' If provided, trackline distance to the sighting will be calculated, which assumes that the vessel is
 #' headed along the trackline at the time of sighting.
+#' @param eye.height Eye height of observer, in meters.
 #' @param deg.per.ret Reticle-to-degree conversion. Default is 0.279, 
 #' which is specific to Fujinon 7x50 binocs (see references). 
 #' On the \emph{Bangarang}, we treated a full reticle as the distance between 
@@ -49,6 +50,7 @@
 #' 
 #' @seealso \code{\link[bangarang]{solve2lines}}
 #' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 
+#' @export
 #' @examples
 #' ###### SHORE EXAMPLE ######
 #' # You are on your way to Cameron Cove 
@@ -79,6 +81,19 @@ whalemap <- function(X,Y,
                      mag=-18.25,
                      deg.per.ret=0.279,
                      toplot=FALSE){
+  
+  # Material for debugging
+  if(FALSE){
+    X <- -129.4188
+    Y <- 53.29034
+    bearing <- 130
+    reticle <- 0.80
+    vessel.hdg=NA
+    mag=-18.25
+    deg.per.ret=0.279
+    toplot=FALSE
+  }
+  
   if(is.na(X) |
        is.na(Y) |
        is.na(bearing) |
@@ -91,8 +106,8 @@ whalemap <- function(X,Y,
     trackdist = NA
     trackbear = NA
   }else{
-    library(PBSmapping)
-    library(swfscMisc)
+    #library(PBSmapping)
+    #library(swfscMisc)
     data(nepacLLhigh) # shoreline dataset
     #################################################################
     # Calculate lateral viewing distance to horizon 
@@ -122,10 +137,15 @@ whalemap <- function(X,Y,
     #
     #################################################################
     # Do same for vessel.hdg
-    Xhorhdg <- destination(Y,X,vessel.hdg,horizon,units="km")[2]
-    Yhorhdg <- destination(Y,X,vessel.hdg,horizon,units="km")[1]
-    Xlinehdg <- seq(X,Xhorhdg,length=20)
-    Ylinehdg <- seq(Y,Yhorhdg,length=20)
+    (Xhorhdg <- swfscMisc::destination(Y,X,vessel.hdg,horizon,units="km")[2])
+    (Yhorhdg <- swfscMisc::destination(Y,X,vessel.hdg,horizon,units="km")[1])
+    if(!is.na(Xhorhdg)){
+      Xlinehdg <- seq(X,Xhorhdg,length=20)
+      Ylinehdg <- seq(Y,Yhorhdg,length=20)
+    }else{
+      Xlinehdg <- NA
+      Ylinehdg <- NA
+    }
     hdgline <- data.frame(Xlinehdg,Ylinehdg)
     #
     #################################################################
@@ -249,7 +269,7 @@ whalemap <- function(X,Y,
     # Which distance to use as the "horizon"? Shore or true horizon?
     if(is.finite(intersection[1])){
       distused <- "shore"
-      refdist <- distance(Y,X,intersection[2],intersection[1],units="km",method="Vincenty")
+      refdist <- distance(Y,X,intersection[2],intersection[1],units="km",method="vincenty")
     }else{
       distused <- "horizon"
       refdist <- horizon
