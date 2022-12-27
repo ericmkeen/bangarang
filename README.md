@@ -17,11 +17,11 @@ library(bangarang)
 # Explore help files and their examples
 ?bangarang
 ```
-###C ontact
+### Contact
 Eric Keen, Scripps Institution of Oceanography
 ericmkeen@gmail.com
 
-###Features functions
+### Features functions
 
 *whalemap*
 
