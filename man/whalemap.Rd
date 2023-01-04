@@ -25,6 +25,8 @@ whalemap(
 
 \item{reticle}{Reticle reading (must be positive). #' @param eye.height Height above sea level of observer's eyes, in meters.}
 
+\item{eye.height}{Eye height of observer, in meters.}
+
 \item{vessel.hdg}{The vessel's heading at the time of the sighting (Optional). It is assumed this information is 
 taken from a GPS, and therefore no magnetic declination correction is applied to it. 
 If provided, trackline distance to the sighting will be calculated, which assumes that the vessel is
