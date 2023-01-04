@@ -108,7 +108,7 @@ whalemap <- function(X,Y,
   }else{
     #library(PBSmapping)
     #library(swfscMisc)
-    data(nepacLLhigh) # shoreline dataset
+    data(nepacLLhigh, package='PBSmapping') # shoreline dataset
     #################################################################
     # Calculate lateral viewing distance to horizon 
     # Equation: 
@@ -122,8 +122,8 @@ whalemap <- function(X,Y,
     #
     #################################################################
     # Create imaginary line along bearing from vessel to horizon.
-    Xhor <- destination(Y,X,bearing,horizon,units="km")[2]
-    Yhor <- destination(Y,X,bearing,horizon,units="km")[1]
+    Xhor <- swfscMisc::destination(Y,X,bearing,horizon,units="km")[2]
+    Yhor <- swfscMisc::destination(Y,X,bearing,horizon,units="km")[1]
     pts.ocean <- list(c(X,Y),c(Xhor,Yhor))
     # Define boundary of where the sighting can occur
     sit.xlims = c(min(c(X,Xhor)),max(c(X,Xhor)))
@@ -305,8 +305,8 @@ whalemap <- function(X,Y,
     #################################################################
     #################################################################
     # Calculate position of animal
-    Ysit <- as.numeric(destination(Y,X,bearing,sitdist,"km")[1])
-    Xsit <- as.numeric(destination(Y,X,bearing,sitdist,"km")[2])
+    Ysit <- as.numeric(swfscMisc::destination(Y,X,bearing,sitdist,"km")[1])
+    Xsit <- as.numeric(swfscMisc::destination(Y,X,bearing,sitdist,"km")[2])
     
     # Add animal position
     if(toplot){
