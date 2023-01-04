@@ -269,7 +269,7 @@ whalemap <- function(X,Y,
     # Which distance to use as the "horizon"? Shore or true horizon?
     if(is.finite(intersection[1])){
       distused <- "shore"
-      refdist <- distance(Y,X,intersection[2],intersection[1],units="km",method="vincenty")
+      refdist <- swfscMisc::distance(Y,X,intersection[2],intersection[1],units="km",method="vincenty")
     }else{
       distused <- "horizon"
       refdist <- horizon
