@@ -7,6 +7,7 @@ R tools for research in the Kitimat Fjord System, developed during the Bangarang
 
 ### Installation
 To install the latest version of this R package from this GitHub website, copy the code below into R and run it (while connected to the internet):
+
 ```
 # make sure you have Rtools installed
 if (!require('devtools')) install.packages('devtools')
@@ -17,16 +18,9 @@ library(bangarang)
 # Explore help files and their examples
 ?bangarang
 ```
+
+[Explore the package featurse and demo code here.](https://ericmkeen.github.io/bangarang/)  
+
 ### Contact
-Eric Keen, Scripps Institution of Oceanography
-ericmkeen@gmail.com
-
-### Features functions
-
-*whalemap*
-
-*plotKFS*
-
-*routeKFS*
-
-...and more!
+Eric Keen Ezell, Sewanee: University of the South
+ekezell@sewanee.edu
