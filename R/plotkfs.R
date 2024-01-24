@@ -45,6 +45,8 @@
 #' @param block.lab.scale Default is \code{FALSE}. If a number, it prints labels within the blocks (only for "mini" and "minirect"), scaled to the number given.
 #' @return Generates map.
 #' @export
+#' @import PBSmapping
+#' @import maps
 #' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 
 #' @examples
 #' ##############################################
@@ -100,9 +102,7 @@ plotKFS <- function(area="Study Area",
         block.lab.scale=FALSE){
   ############################################################################
   ############################################################################
-  library(PBSmapping)
-  library(maps)
-  library(maptools)
+
   data(nepacLLhigh)
   if(is.null(blocking)){blocking <- 1}
 

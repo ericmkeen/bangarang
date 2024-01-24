@@ -9,19 +9,47 @@ date: "2024-01-24"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+The `bangarang` package is a bundle of datasets and functions that help analysts with research in the Kitimat Fjord System (KFS) in the north coast of mainland British Columbia. Nearly all of the content is catered specifically to analysis of datasets from the *RV Bangarang* expedition of 2013 - 2015, which was focused on the abundance, distribution, and foraging ecology of whales, seabirds, salmon, and their prey during the months of summer and early fall. The research involved line-transect sampling, active acoustic (echosounder) surveys, and oceanographic sampling (both while underway and at a grid of stations).  
+
+Methodological details can be found [here](https://www.proquest.com/openview/80b2657e67f175b980c671414383b11a/1?pq-origsite=gscholar&cbl=18750). More info on the *Bangarang* project can be found [here](https://rvbangarang.wordpress.com/). The *Bangarang* project was carried out as a doctoral thesis at Scripps Institution of Oceanography in close collaboration with the [Gitga'at First Nation](https://www.gitgaatnation.ca/oceans-lands), [BC Whales](www.bcwhales.org), Fisheries & Oceans Canada, and the NOAA Southwest Fisheries Science Center.  
+
+### Installation
+
+The `bangarang` package can be downloaded directly from `GitHub`:
+
+```{r echo=TRUE, eval=FALSE}
+# Install devtools if needed
+if (!require('devtools')) install.packages('devtools')
+
+# Install package
+devtools::install_github('ericmkeen/bangarang')
+```
+
+Load into your `R` session:  
+
 ```{r echo=TRUE, eval=TRUE}
 library(bangarang)
 ```
 
+This vignette was made with `bangarang` version `r utils::packageVersion('LTabundR')`, and will make use of a few other packages: 
+
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-library(dplyr)
+library(tidyverse)
 library(ggplot2)
 ```
 
 ### Maps
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+Produce a map of the *Bangarang* study area in the KFS using the `ggplot` and `sf` packages:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 gg_kfs()
+```
+
+As with all the `bangarang` functions, see this function's documentation for changing the geographic range, color, and transparency settings. 
+
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+?gg_kfs
 ```
 
 
@@ -31,8 +59,19 @@ gg_kfs()
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(kfs_land)
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+kfs_land %>% class
 
 kfs_land %>% glimpse
+```
+
+Snapshot of dataset: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 4, fig.height=4}
+par(mar=c(.1,.1,.1,.1))
+kfs_land %>% plot
 ```
 
 #### Seafloor 
@@ -43,27 +82,36 @@ data(kfs_seafloor)
 kfs_seafloor %>% glimpse
 ```
 
-#### Proposed LNG shipping route 
+Plot it:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+ggplot(kfs_seafloor,
+       aes(x=x, y=y, color=layer)) + 
+  geom_point(size=.1) + 
+  xlab(NULL) + ylab(NULL) + labs(color = 'Depth (m)') + 
+  theme_minimal()
+```
+
+#### Proposed LNG shipping routes
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 data(shiplane)
 
 shiplane %>% glimpse
 ```
 
+Plot it:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+gg_kfs() + 
+  geom_path(data=shiplane,
+            mapping=aes(x=X, y=Y, group=PID)) + 
+  xlab(NULL) + ylab(NULL)
+```
+
 #### Geostrata 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-data(blocks)
-
-blocks %>% glimpse
-```
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-data(channels)
-
-channels %>% glimpse
-```
+##### Four main "provinces" referenced in study
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(provinces)
@@ -71,7 +119,90 @@ data(provinces)
 provinces %>% glimpse
 ```
 
-#### Stations 
+Check it out:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_polygon(data=provinces,
+            mapping=aes(x=X, 
+                        y=Y,
+                        group = factor(province),
+                        fill = factor(province),
+                        color = factor(province)),
+            alpha=.4) + 
+  xlab(NULL) + ylab(NULL) + labs(fill='Province', color='Province')
+```
+
+
+##### Eight main channels referenced in study
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(channels)
+
+channels %>% glimpse
+```
+
+Check it out:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_polygon(data=channels,
+            mapping=aes(x=X, 
+                        y=Y,
+                        fill = province,
+                        color = province),
+            alpha=.4) + 
+  xlab(NULL) + ylab(NULL)
+```
+
+##### Rectangular blocks (medium size). 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(kfs_blocks_bbox)
+
+kfs_blocks_bbox %>% glimpse
+```
+
+Check it out:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_rect(data=kfs_blocks_bbox,
+            mapping=aes(xmin=left, 
+                        xmax=right,
+                        ymin=bottom,
+                        ymax=top,
+                        group=id),
+            fill=NA,
+            color='black') + 
+  xlab(NULL) + ylab(NULL)
+```
+
+##### Rectangular blocks (small size). 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(blocks)
+
+blocks %>% glimpse
+```
+
+Check it out:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_rect(data=blocks,
+            mapping=aes(xmin=left, 
+                        xmax=right,
+                        ymin=bottom,
+                        ymax=top,
+                        group=name),
+            fill=NA,
+            color='black') + 
+  xlab(NULL) + ylab(NULL)
+```
+
+
+#### Oceanographic stations 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(stations)
@@ -79,12 +210,80 @@ data(stations)
 stations %>% glimpse
 ```
 
+Check it out:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_point(data=stations,
+            mapping=aes(x=long, 
+                        y=lat,
+                        group = block),
+            alpha=.8) + 
+  xlab(NULL) + ylab(NULL) + labs(group='Waterway')
+```
+
 #### Effort 
+
+All survey effort aboard the *Bangarang*:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(effort)
 
 effort %>% glimpse
+```
+
+Map overview:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_point(data=effort,
+            mapping=aes(x=lon, 
+                        y=lat,
+                        color = effort),
+            alpha=.4,
+            size=.2) + 
+  xlab(NULL) + ylab(NULL) 
+```
+
+Show each year separately: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+gg_kfs() + 
+  geom_point(data=effort,
+            mapping=aes(x=lon, 
+                        y=lat,
+                        color = effort),
+            alpha=.4,
+            size=.2) + 
+  facet_wrap(~lubridate::year(date)) + 
+  xlab(NULL) + ylab(NULL) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+```
+
+Show each circuit in 2015 separately, systematic transect effort only:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+# Filter to transect effort only
+transects <- 
+  effort %>% 
+  filter(lubridate::year(date) == 2015,
+         effort == 'transect') %>% 
+  mutate(group = paste0(lubridate::year(date), ' circuit ', circuit))
+
+# plot it
+gg_kfs() + 
+  geom_point(data= transects,
+             mapping=aes(x=lon, 
+                        y=lat),
+            alpha=.4,
+            size=.2) + 
+  facet_wrap(~group) + 
+  xlab(NULL) + ylab(NULL) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
 ```
 
 #### Seabirds 
@@ -95,12 +294,37 @@ data(seabirds)
 seabirds %>% glimpse
 ```
 
+Map it: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+gg_kfs() + 
+  geom_point(data=seabirds,
+            mapping=aes(x=lon, 
+                        y=lat,
+                        color = sp1,
+                        size = best),
+            alpha=.4) + 
+  xlab(NULL) + ylab(NULL) 
+```
+
 #### Salmon 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(salmon)
 
 salmon %>% glimpse
+```
+
+Map it;  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_point(data=salmon,
+            mapping=aes(x=lon, 
+                        y=lat,
+                        size = jumps),
+            alpha=.4) + 
+  xlab(NULL) + ylab(NULL) 
 ```
 
 #### Whales 
@@ -111,7 +335,20 @@ data(whale_sightings)
 whale_sightings %>% glimpse
 ```
 
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+gg_kfs() + 
+  geom_point(data=whale_sightings,
+            mapping=aes(x=x, 
+                        y=y,
+                        color = spp,
+                        size = size),
+            alpha=.4) + 
+  xlab(NULL) + ylab(NULL) 
+```
+
 #### Oceanography 
+
+This dataset is an interpolated grid of oceanographic values for each circuit in each year. Some variables are from the thermosalinograph we had running at the surface during transects, some are from the echosounder we used while underway, and others are from the Seabird Electronics CTD we used at the grid of oceanographic stations. 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(ocean)
@@ -119,25 +356,91 @@ data(ocean)
 ocean %>% glimpse
 ```
 
+Here are the variables included:
 
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+ocean$metric %>% unique %>% sort
+```
+
+As an example, say we wanted a map of the sea surface salinity (`SSS`) for each circuit of the 2015 season.  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+# Filter the dataset
+sss <- 
+  ocean %>% 
+  filter(metric == 'SSS', 
+         year==2015)
+
+# Map it
+gg_kfs() + 
+  geom_point(data=sss,
+             mapping=aes(x=lon, 
+                         y=lat,
+                         color=value),
+             size=.05) + 
+  facet_wrap(~circuit) +
+  xlab(NULL) + ylab(NULL) + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  scale_color_gradientn(colours = rev(rainbow(5)))
+```
 
 ### Helper functions
 
+#### `in_block()`
+
+A way to see which geostratum a pair of coordinates is located within. 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-#in_block()
+in_block(x= -129.4, y=53.2)
 ```
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-#in_kfs()
+in_block(x= -129.2, y=52.9)
 ```
+  
+  
+#### `in_kfs()`
+
+A quick test to see if coordinates properly within the water within the boundaries of the KFS (as defined by the *Bangarang* project). The function returns the dataset with a new column, `inkfs`: 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-#in_water()
+test <- in_kfs(seabirds %>% rename(x=lon, y=lat),
+                 toplot = TRUE)
+
+test$inkfs %>% table
 ```
 
+  
+  
+#### `in_water()`
+
+A quick test to see if coordinates properly within the water within the water (and not on land by mistake). The function returns the dataset with a new column, `valid`: 
+
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-#whale_map()
+test <- in_water(seabirds %>% rename(x=lon, y=lat),
+                 toplot = TRUE)
+
+test$valid %>% table
+```
+  
+  
+  
+#### `whale_map()`
+
+Calculates the true position of a sighting within the KFS, in offshore or confined coastal waters, accounting for whether or not the observer is using the horizon or a shoreline as the basis for the reticle reading.  
+
+The `X` and `Y` you supply is the observer's location (either a boat or a stationary field station).  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+whalemap(X= -129.2, 
+         Y=52.9,
+         bearing = 313,
+         reticle = 0.2,
+         eye.height = 2.1,
+         vessel.hdg = 172,
+         toplot=TRUE)
 ```
 
 
