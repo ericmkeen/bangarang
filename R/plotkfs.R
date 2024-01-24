@@ -103,7 +103,7 @@ plotKFS <- function(area="Study Area",
   ############################################################################
   ############################################################################
 
-  data(nepacLLhigh)
+  data(nepacLLhigh, package='PBSmapping')
   if(is.null(blocking)){blocking <- 1}
 
   #### LONGITUDE
