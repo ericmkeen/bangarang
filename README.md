@@ -19,7 +19,7 @@ library(bangarang)
 ?bangarang
 ```
 
-[Explore the package featurse and demo code here.](https://ericmkeen.github.io/bangarang/)  
+[Explore the package features and demo code here.](https://ericmkeen.github.io/bangarang/)  
 
 ### Contact
 Eric Keen Ezell, Sewanee: University of the South
