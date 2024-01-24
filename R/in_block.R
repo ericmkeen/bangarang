@@ -4,7 +4,6 @@
 #' @param y Latitude, decimal degrees. 
 #' @param toplot Boolean with default `FALSE`.
 #'
-#' @return
 #' @export
 #'
 in_block <- function(x,y,toplot=FALSE){

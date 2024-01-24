@@ -13,9 +13,6 @@ in_block(x, y, toplot = FALSE)
 
 \item{toplot}{Boolean with default `FALSE`.}
 }
-\value{
-
-}
 \description{
 Assign coordinates to KFS block
 }

@@ -23,12 +23,12 @@ Helper functions for routeKFS
 }
 \section{Functions}{
 \itemize{
-\item \code{closest2end}: Determine node closest to end destination
+\item \code{closest2end()}: Determine node closest to end destination
 
-\item \code{find.LOS.nodes}: Determine which nodes are line-of-sight of a point
+\item \code{find.LOS.nodes()}: Determine which nodes are line-of-sight of a point
 
-\item \code{dist2nodes}: Calculated distance between two nodes
+\item \code{dist2nodes()}: Calculated distance between two nodes
 
-\item \code{find.unusables}: Eliminate potential nodes based on their distance from the current node
+\item \code{find.unusables()}: Eliminate potential nodes based on their distance from the current node
+
 }}
-
