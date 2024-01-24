@@ -1,0 +1,145 @@
+---
+title: "`R` package `bangarang`"
+output: html_document
+author: Eric Keen Ezell
+date: "2024-01-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=TRUE, eval=TRUE}
+library(bangarang)
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+### Maps
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+gg_kfs()
+```
+
+
+### Datasets
+
+#### Land
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(kfs_land)
+
+kfs_land %>% glimpse
+```
+
+#### Seafloor 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(kfs_seafloor)
+
+kfs_seafloor %>% glimpse
+```
+
+#### Proposed LNG shipping route 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(shiplane)
+
+shiplane %>% glimpse
+```
+
+#### Geostrata 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(blocks)
+
+blocks %>% glimpse
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(channels)
+
+channels %>% glimpse
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(provinces)
+
+provinces %>% glimpse
+```
+
+#### Stations 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(stations)
+
+stations %>% glimpse
+```
+
+#### Effort 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(effort)
+
+effort %>% glimpse
+```
+
+#### Seabirds 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(seabirds)
+
+seabirds %>% glimpse
+```
+
+#### Salmon 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(salmon)
+
+salmon %>% glimpse
+```
+
+#### Whales 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(whale_sightings)
+
+whale_sightings %>% glimpse
+```
+
+#### Oceanography 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(ocean)
+
+ocean %>% glimpse
+```
+
+
+
+### Helper functions
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+#in_block()
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+#in_kfs()
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+#in_water()
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+#whale_map()
+```
+
+
+
+
