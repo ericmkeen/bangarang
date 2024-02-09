@@ -327,6 +327,16 @@ gg_kfs() +
   xlab(NULL) + ylab(NULL) 
 ```
 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+ggplot(salmon %>% 
+         filter(zone < 3) %>% 
+         mutate(Zone = factor(zone)),
+       aes(x=Zone)) + 
+  geom_bar(stat='count')
+
+```
+
 #### Whales 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}

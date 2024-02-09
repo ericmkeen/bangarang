@@ -37,5 +37,5 @@ in_water <- function(xy,
     points(mrin$x,mrin$y,pch=16,cex=.5,col="firebrick")
   }
   
-  return(mri)
+  return(mrin)
 }
