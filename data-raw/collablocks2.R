@@ -388,7 +388,7 @@ design_angles <- c( 120, # wright
                     0, # whale
                     0, # campania
                     0, # squ 
-                    170, # lewis
+                    32.5, # lewis
                     90, # otter
                     150, # estevan
                     125, # caamano
