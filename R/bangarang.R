@@ -44,7 +44,7 @@
 #' 
 #' @author Eric Keen, Scripps Institution of Oceanography, \email{ekeen@@ucsd.edu} 
 
-#' @docType package
+#' @docType _PACKAGE
 #' @name bangarang
 NULL
 #> NULL
