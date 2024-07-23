@@ -307,6 +307,68 @@ gg_kfs() +
   xlab(NULL) + ylab(NULL) 
 ```
 
+Column definitions:  
+
+- **`date`:** Date and time, in format `YYYY-MM-DD HH:MM:SS` .   
+
+- **`lat`:**  Latitude in decimal degrees.   
+
+- **`lon`:**  Longitude in decimal degrees.   
+
+- **`effort`:**  Code for search effort: `"off"` = opportunistic sighting occurring while off search effort; `"casual"` = opportunistic sighting occurring while transiting area while off seaerch effort; `"station"` = opportunistic sighting while conducting sampling at oceanographic stations; `"with whale"` = opportunistic sighting while conducting focal follows of whales; `"transect"` = seabird detection during systematic line-transect effort. Analyses focused on density/abundance estimation should filter to `"transect"` effort only.  
+
+- **`bft`:**  Beaufort sea state, ranging from `0` (glassy calm) to `4` (white caps everywhere); this may be a useful covariate in a density/abundance model.     
+
+- **`precip`:** Precipitation state; another potentially useful covariate.  
+
+- **`knots`:** Ship speed in knots.   
+
+- **`hdg`:**  Ship heading (range = 0 - 360 degrees).  
+
+- **`wind_kph_raw`:** Apparent wind speed, in kilometers per hour, as received by the shipboard weather station, unadjusted for ship speed or heading.  
+
+- **`wind_hdg_raw`:** Apparent wind heading, in degrees, as received by the shipboard weather station, unadjusted for ship speed or heading.  
+
+- **`zone`:** Category of distance from the vessel's track line, as estimated by a handheld rangefinder: Zone `"1"` is 0 - 75m, Zone `"2"` is 75m - 150m. The zone `"OUT"` means the bird was estimated to be beyond 150m. The zone `"221"` means that the bird was originally seen in Zone `2` but it approached as near as Zone 1 (either due to bird movement or ship approaching the bird). We recorded this note to test for a couple things: (1) If more birds are being observed in Zone 1 vs. Zone 2, that may mean that we are missing some birds in Zone 2 and our assumption that our strip width is 150m on either side of the vessel may be problematic; and (2) If more birds are being observed in Zone 2 than Zone 1, that may mean that birds are avoiding the vessel and some could even be flushing beyond Zone 2, which could also be problematic for density estimation. 
+
+- **`line`:** An indication of whether there was uncertainty about which `zone` the bird occurred within; if `MIDL`, the bird occurred right on the line between Zone 1 and Zone 2 by the observer's estimation; if `OUTR`, the bird occurred right on the line between Zone 2 and beyond. If your analysis assumed a strip width of 150m on each side of the vessel, the sightings marked `OUTR` may be of special interest: how drastically would your density estimates change if those sightings were included or excluded?  
+
+- **`side`:** The side of the vessel (`PORT` or `STARBOARD`) the bird was seen on. If the value is `HELM`, that means the researcher at the data entry position at the helm detected the sighting. Likely not relevant to basic density/abundance estimation analyses. 
+
+- **`best`:** Best estimate of total flock size.  
+
+- **`min`:** Minimum estimate of total flock size.   
+
+- **`max`:** Maximum estimate of total flock size.  
+
+- **`feed`:** Indication of whether or not the birds are feeding: `"M"` = Maybe; `"N"` = No; `"S"` = Some; `"W"` = Unknown; `"Y"` = Yes.  
+
+- **`motion`:** Indication of bird's motion behavior: `"FLUSH"` = Birds were originally sitting but were flushed (either dove or flew off) in response to the research vessel; `"FLY"` = Birds were in flight; `"FOLO"` = Birds are following the research vessel (problematic for recounting!); `"RAFT"` = Birds were rafting on surface debris, such as floating kelp or logs; `"SIT"` = Birds were sitting on the water.  
+
+- **`dir`:** Indication of bird's flight direction (if flying); cardinal directions are typically used (`"N"`, `"NE"`, `"E"`, `"SE"`, `"S"`, `"SW"`, `"W"`, `"NW"`) with the exception of birds circling the vessel (`"CIR"` or `"CR"`).  
+  
+- **`height`:** Estimate of bird's flight height above sea level, in meters. This is relevant because wind speed increases predictably with height above sea level.  
+
+- **`sp1`:** Four-letter species code for primary (and possibly only) species in the flock.   
+
+- **`per1`:** Percentage of total flock size that `sp1` comprises.  
+
+- **`plum1`:** Primary plumage state for `sp1`. Note that, in some cases, if a single species occurs in several different plumage state, the same species might be entered as `sp1`, `sp2`, and even `sp3`. Codes: `"AB"` or `"ABE"` = Adult breeding, either/both sex(es); `"ABF"` = Adult breeding, female; `"ABM"` = Adult breeding, male; `"ANE"` = Adult non-breeding, either/both sex(es); `"FLE"` = Fledgling; `"JV"` or `"JVE"` = Juvenile; `"MX"` = Mixture of unspecified plumages present; `"NBE"` = Non-breeding, either/both sex(es); `"OTH"` = Other unspecified plumage; `"SA"` = Sub-adult plumage; `"AAE"` or `"AAM"` = unknown.  
+
+- **`sp2`:** If this is a mixed-species flock with two or more species present, this is the four-letter species code for the second species.  
+
+- **`per2`:** Percentage of total flock size that `sp2` comprises, if present.  
+
+- **`plum2`:** Primary plumage state for `sp2`, if present.  
+
+- **`sp3`:** If this is a mixed-species flock with three species present, this is the four-letter species code for the third species.  
+
+- **`per3`:** Percentage of total flock size that `sp3` comprises, if present.  
+
+- **`plum3`:** Primary plumage state for `sp3`, if present.  
+
+
+
 #### Salmon 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
