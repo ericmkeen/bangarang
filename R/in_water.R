@@ -1,12 +1,14 @@
 #' Are coordinates properly within the water within the KFS?
 #'
 #' @param xy Dataframe with coordinates, decimal degrees, in columns 'x' and 'y'
+#' @param filter_to_valid Boolean, should the dataset be filtered to only valid coordinates?
 #' @param toplot Boolean with default `FALSE`.
 #'
 #' @return The `xy` dataframe, filtered only to coordinates that are (1) in the KFS and (2) not on land. 
 #' @export
 #'
 in_water <- function(xy,
+                     filter_to_valid = TRUE,
                      toplot=FALSE){
   #data('whale_sightings')
   #xy <- whale_sightings
@@ -31,7 +33,11 @@ in_water <- function(xy,
   mri$valid <- FALSE
   mri$valid[is.na(otest)] <- TRUE
   table(mri$valid)
-  mrin <- mri[mri$valid,] ; nrow(mrin)
+  
+  mrin <- mri
+  if(filter_to_valid){
+    mrin <- mri[mri$valid,] ; nrow(mrin)
+  }
 
   if(toplot){
     points(mrin$x,mrin$y,pch=16,cex=.5,col="firebrick")
