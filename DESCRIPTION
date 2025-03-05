@@ -1,7 +1,7 @@
 Package: bangarang
 Type: Package
 Title: Bangarang data tools for the Kitimat Fjord System
-Version: 2.8
+Version: 2.9
 Date: 2024-01-23
 Authors@R: person("Eric", "Keen Ezell", email="ekeen@ucsd.edu",role=c("aut","cre"))
 Maintainer: Eric Keen <ekezell@sewanee.edu>

@@ -4,9 +4,10 @@
 #' @param kfs_grid `data.frame` of grid coordinates, with `x` and `y` columns. If `NULL`, the built-in `grid` dataset from the `bangarang` package will be used.  
 #' @param point_size Size of each grid point. May need to be adjusted based on output size of your plot. 
 #' @param color_map The color palette to use from the `viridis` package.  
-#' @param scale_breaks Vector of values to note in the color scale legend.
-#' @param scale_limits Two-element vector of minimum and maximum values to plot.
 #' @param pseudo_log Boolean; if `TRUE`, the color scale will be log-transformed to better-show minute variations at small values. Zero will still be plotted. 
+#' @param scale_limits Two-element vector of minimum and maximum values to plot.
+#' @param scale_breaks Vector of values to note in the color scale legend.
+#' @param scale_labels Character vector corresponding to scale breaks. 
 #' @param map_title Optional.
 #' @param legend_title Optional.
 #' @param lat_range Two-element vector of latitudinal range
@@ -29,9 +30,10 @@ gg_kfs_grid <- function(values,
                         kfs_grid = NULL,
                         point_size = 2.35,
                         color_map = 'viridis',
-                        scale_breaks = NULL,
-                        scale_limits = NULL,
                         pseudo_log = FALSE,
+                        scale_limits = NULL,
+                        scale_breaks = NULL,
+                        scale_labels = NULL,
                         map_title = NULL,
                         legend_title = 'Values',
                         lat_range = c(52.8, 53.55),
@@ -80,6 +82,19 @@ gg_kfs_grid <- function(values,
   (vt <- ifelse(pseudo_log,
                 scales::transform_pseudo_log(sigma = 0.001),
                 'identity')[[1]])
+  
+  if(is.null(scale_breaks)){
+    if(is.null(scale_limits)){
+      scale_breaks <- range(values)
+    }else{
+      scale_breaks <- scale_limits
+    }
+  }
+  
+  if(is.null(scale_labels)){
+    scale_labels <- scale_breaks
+  }
+  
   p <- 
     ggplot2::ggplot() +
     geom_point(data=gridr,
@@ -89,8 +104,10 @@ gg_kfs_grid <- function(values,
                cex=point_size)  +
     ggplot2::scale_color_viridis_c(name=legend_title,
                                    breaks=scale_breaks,
+                                   labels=scale_labels,
                                    limits=scale_limits,
                                    transform = vt,
+                                   oob = scales::squish,
                                    option = color_map) +
     ggplot2::geom_sf(data=nepac_shore_sf,
                      fill=land_fill,
@@ -101,7 +118,7 @@ gg_kfs_grid <- function(values,
                       xlim=lon_range) + 
     ggplot2::theme_light() + 
     theme(panel.background = element_rect(fill = adjustcolor(water_fill, alpha.f=water_alpha),
-                                          size = 0.5, linetype = "solid")) + 
+                                          linewidth = 0.5, linetype = "solid")) + 
     xlab(NULL) + 
     ylab(NULL) + 
     labs(title = map_title)
