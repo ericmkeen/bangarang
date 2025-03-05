@@ -1,7 +1,7 @@
 Package: bangarang
 Type: Package
 Title: Bangarang data tools for the Kitimat Fjord System
-Version: 2.6
+Version: 2.8
 Date: 2024-01-23
 Authors@R: person("Eric", "Keen Ezell", email="ekeen@ucsd.edu",role=c("aut","cre"))
 Maintainer: Eric Keen <ekezell@sewanee.edu>
@@ -15,10 +15,12 @@ Imports:
     dssd,
     ggplot2,
     PBSmapping (>= 2.67.60),
+    scales,
     sf,
     sp,
     swfscMisc (>= 1.0.3),
-    tidyr
+    tidyr,
+    viridis
 License: GPL-2
 LazyData: true
 Suggests: knitr
