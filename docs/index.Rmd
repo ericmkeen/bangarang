@@ -515,6 +515,8 @@ whalemap(X= -129.2,
          toplot=TRUE)
 ```
 
+### Seabird density estimation
+
 
 
 

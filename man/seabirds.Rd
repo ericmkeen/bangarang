@@ -5,7 +5,7 @@
 \alias{seabirds}
 \title{Bangarang seabird sightings}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3668 rows and 29 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 3668 rows and 30 columns.
 }
 \source{
 Written and compiled by Eric Keen Ezell.

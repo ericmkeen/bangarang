@@ -5,7 +5,7 @@
 \alias{segments_5km}
 \title{Metadata for 5km segments of Bangarang effort, 2013 - 2015.}
 \format{
-An object of class \code{spec_tbl_df} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 713 rows and 13 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 713 rows and 18 columns.
 }
 \usage{
 segments_5km
