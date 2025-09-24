@@ -21,6 +21,9 @@ The `bangarang` package can be downloaded directly from `GitHub`:
 # Install devtools if needed
 if (!require('devtools')) install.packages('devtools')
 
+# Increase timeout for download, since there are datasets
+options(timeout=9999999)
+
 # Install package
 devtools::install_github('ericmkeen/bangarang')
 ```
@@ -544,7 +547,7 @@ segments %>% head
 
 # View centroid of each segment
 gg_kfs() + 
-  geom_point(data=segments, mapping=aes(x=x, y=y))
+  geom_point(data=segments, mapping=aes(x=x, y=y), alpha=.5)
 ```
 
 
@@ -570,6 +573,10 @@ mamu %>% nrow
 
 # Review data
 mamu %>% as.data.frame %>% head
+
+# Map data
+gg_kfs() + 
+  geom_point(data=mamu, mapping=aes(x=lon, y=lat, size=best), alpha=.5)
 ```
 
 We now need to determine which effort segment each sighting occurred during. To do so, use the function `segment_sync()`, which uses time differences to find the segment that overlaps with each sighting's timestamp:  
@@ -613,9 +620,24 @@ Here is a summary of that model:
 dsm_basic %>% summary
 ```
 
+We then use that DSM to predict murrelet density on our spatial grid:
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+d <- predict_dsm_kfs(dsm_basic, segments, grid)
+```
+
+That function, `predict_dsm_kfs()`, returns a vector of density estimates equal in length to the number of rows in the `grid` `data.frame`.  
+
+We then use that DSM to predict murrelet density on our spatial grid during each circuit of the study area. We completed a total of 9 circuits whose information is contained in the built-in dataset `data(circuits)`:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(circuits)
+
+circuits %>% head
+```
+
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 # Visualize & predict densities
-predict_dsm_kfs(dsm_basic, segments, grid)
 
 ```
 

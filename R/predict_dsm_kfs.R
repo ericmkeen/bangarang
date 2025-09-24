@@ -13,6 +13,7 @@
 #' @import mrds
 #' @import spatstat.geom
 #' @import spatstat.explore
+#' @import data.table
 #'
 predict_dsm_kfs <- function(dsm_keep, 
                             segments, 
@@ -53,10 +54,10 @@ predict_dsm_kfs <- function(dsm_keep,
   
   # Now use fine-scale raster to find predicted density at each grids location
   dist <- function(a, b){
-    dt <- data.table((df2$x-a)^2+(df2$y-b)^2)
+    dt <- data.table::data.table((df2$x-a)^2+(df2$y-b)^2)
     return(which.min(dt$V1))}
-  df1 <- data.table(x=grids$x, y=grids$y) ; head(df1)
-  df2 <- data.table(x=xdf$x, y=xdf$y) ; head(df2)
+  df1 <- data.table::data.table(x=grids$x, y=grids$y) ; head(df1)
+  df2 <- data.table::data.table(x=xdf$x, y=xdf$y) ; head(df2)
   results <- df1[, j = list(Closest =  dist(x, y)), by = 1:nrow(df1)]
   grids$d_mean <- xdf$value[results$Closest]
   
