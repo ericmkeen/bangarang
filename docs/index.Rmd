@@ -626,21 +626,35 @@ We then use that DSM to predict murrelet density on our spatial grid:
 d <- predict_dsm_kfs(dsm_basic, segments, grid)
 ```
 
-That function, `predict_dsm_kfs()`, returns a vector of density estimates equal in length to the number of rows in the `grid` `data.frame`.  
+That function, `predict_dsm_kfs()`, returns a vector of density estimates (birds km^-2) equal in length to the number of rows in the `grid` `data.frame`.  
 
-We then use that DSM to predict murrelet density on our spatial grid during each circuit of the study area. We completed a total of 9 circuits whose information is contained in the built-in dataset `data(circuits)`:  
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+d %>% hist
+```
+
+You can also use a wrapper function, `predict_circuits()`, to predict the density surface during each circuit of the study area. We completed a total of 9 circuits whose information is contained in the built-in dataset `data(circuits)`:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(circuits)
 
 circuits %>% head
+
+d_circuits <- 
+  predict_circuits(dsm_basic, 
+                   segments,
+                   grid,
+                   toplot=FALSE)
 ```
+
+We can use the function `point_summary()` to calculate average density across the DSM: 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-# Visualize & predict densities
-
+point_summary(d_circuits)
 ```
 
+##### Model selection
+
+To improve the DSM model, you can introduce covariates from your `segments` dataset.  The `bangarang` package provides a function, `dsm_comps()`, that will ues AICc to rank candidate models for all possible combinations of the supplied covariates. The analyst can then decide which formula to bring into the density estimation stage. The assumed distribution family is `"tweedie"`.    
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 dsm_comps <- 
@@ -649,40 +663,55 @@ dsm_comps <-
               dummy_ds,
               candidate_splines = c('s(yday)', 's(z)', 'year'),
               base_formula = 'density.est ~ s(x,y)')
+```
 
+That process produces the following summary: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 dsm_comps$dsm
-dsm_comps$objects[[1]] %>% summary
 ```
 
+Based on this summary, we can get details on the most parsimonious model:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-################################################################################
-# DSM point estimates & bootstraps
-
-dsm_keep <- dsm0
+dsm_comps$objects[[7]] %>% summary
 ```
 
+And we will save that model object as our model to keep: 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-data(circuits)
-circuits %>% head
+dsm_keep <- dsm_comps$objects[[7]]
 ```
 
+And we will re-run our point estimate using that model:  
+
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-# Point estimate
 point_estimate <-
-  predict_circuits(dsm_keep, segments)
-point_estimate %>% head
+  predict_circuits(dsm_keep, segments, grid, toplot=FALSE)
 
+point_summary(point_estimate)
 ```
 
+##### Variance estimation
+
+To quantify the uncertainty in our point estimate, the `bangarang` package provides a bootstrap function.  
+
+First, we store the formula used in the best-fit DSM:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-# Bootstraps
 (dsm_formula <- summary(dsm_keep)$formula)
-
 ```
 
+Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+bootstraps <-
+  bootstrapper_wrapper(dsm_formula,
+                       segments,
+                       observation_data,
+                       B = 10,
+                       output_filename = NULL)
+```
 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
@@ -698,6 +727,8 @@ bootstraps <-
                        B = 10,
                        output_filename = NULL)
 ```
+
+See the documentation for that function for more help.  
 
 
 
