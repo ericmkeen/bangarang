@@ -11,6 +11,8 @@
 #' @import dsm
 #' @import dplyr
 #' @import mrds
+#' @import spatstat.geom
+#' @import spatstat.explore
 #'
 predict_dsm_kfs <- function(dsm_keep, 
                             segments, 
@@ -33,9 +35,9 @@ predict_dsm_kfs <- function(dsm_keep,
   x <- raster::rasterize(df[, 1:2], r, df[,3], fun=mean)
   
   # Interpolate with inverse distance weighting
-  dfwin <- owin(xrange = range(grids$x), yrange = range(grids$y))
-  dfppp <- ppp(x = df$x, y=df$y, window = dfwin, marks = df$z)
-  xi <- idw(dfppp, at='pixels')
+  dfwin <- spatstat.geom::owin(xrange = range(grids$x), yrange = range(grids$y))
+  dfppp <- spatstat.geom::ppp(x = df$x, y=df$y, window = dfwin, marks = df$z)
+  xi <- spatstat.explore::idw(dfppp, at='pixels')
   class(xi)
   
   #  Prepare fine-scale grid of densities

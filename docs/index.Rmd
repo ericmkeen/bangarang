@@ -517,6 +517,234 @@ whalemap(X= -129.2,
 
 ### Seabird density estimation
 
+To showcase some other functions in the `bangarang` package, here is an example workflow for estimating the density/abundance of a seabird from the *Bangarang* study area. I use a density-surface-modeling (DSM) approach based on the `R` package `dsm` ([Github](https://github.com/DistanceDevelopment/dsm)). In a DSM, species density is estimated for each point in a grid of your study area. The `bangarang` package provides a 1-square-km grid as a built-in dataset: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(grid, package='bangarang')
+grid %>% head
+```
+
+Here is a map of the centroid of each grid cell:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+gg_kfs() + 
+  geom_point(data=grid, mapping=aes(x=x, y=y))
+```
+
+The package also offers a dataset of systematic transect effort split into 5-km segments, a common length in habitat modeling:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(segments_5km)
+
+# Rename
+segments <- segments_5km
+
+# Check out
+segments %>% head
+
+# View centroid of each segment
+gg_kfs() + 
+  geom_point(data=segments, mapping=aes(x=x, y=y))
+```
 
 
+#### Sitting & flushed birds 
+
+We then filter the built-in sightings dataset, `"seabirds"`, to our species of interest. In this case, marbled murrelet (4-letter code: "MAMU"). We will analyze sitting birds separately from flying birds, since the former will be relevant to subsequent foraging preference analyses. 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(seabirds)
+
+mamu <-
+  seabirds %>%
+  filter(effort == 'transect') %>%
+  filter(zone != 'OUT') %>%
+  # filter to any sighting that had MAMU in any of the three species slots
+  filter(sp1 == 'MAMU' | sp2 == 'MAMU' | sp3 == 'MAMU') %>%
+  filter(motion %in% c('SIT', 'FLUSH')) %>%
+  # provide a single authoritative species ID
+  mutate(spp = 'MAMU')
+
+# Check sample size
+mamu %>% nrow
+
+# Review data
+mamu %>% as.data.frame %>% head
+```
+
+We now need to determine which effort segment each sighting occurred during. To do so, use the function `segment_sync()`, which uses time differences to find the segment that overlaps with each sighting's timestamp:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Sync segment numbers to sightings
+mamu <- segment_sync(segments = segments,
+                     sightings = mamu)
+```
+
+We then use the `format_observation_data()` function to transform the `mamu` dataset to meet formatting requirements for the DSM:
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+observation_data <- format_observation_data(mamu)
+
+observation_data %>% as.data.frame %>% head
+```
+
+Since we used strip-width sampling in seabird surveys aboard the *Bangarang*, we will create a dummy detection function that stands in for this aspect of the DSM analysis:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+dummy_ds <- create_dummy_detection_function(observation_data)
+```
+
+We can now develop our DSM using the function `dsm()` from package `dsm`.  Here is a basic example that models density according to a spline interaction of longitude and latitude. (The `convert.units` input handles the fact that, in our `seabirds` dataset, distance is specified in meters instead of kilometers.). 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+library(dsm)
+
+dsm_basic <-
+  dsm(formula = density.est ~ s(x,y),
+      ddf.obj = dummy_ds,
+      convert.units=1/1000,
+      segment.data = segments,
+      observation.data = observation_data)
+```
+
+Here is a summary of that model:  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+dsm_basic %>% summary
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Visualize & predict densities
+predict_dsm_kfs(dsm_basic, segments, grid)
+
+```
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+dsm_comps <- 
+  dsm_compare(segments,
+              observation_data,
+              dummy_ds,
+              candidate_splines = c('s(yday)', 's(z)', 'year'),
+              base_formula = 'density.est ~ s(x,y)')
+
+dsm_comps$dsm
+dsm_comps$objects[[1]] %>% summary
+```
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+################################################################################
+# DSM point estimates & bootstraps
+
+dsm_keep <- dsm0
+```
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(circuits)
+circuits %>% head
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Point estimate
+point_estimate <-
+  predict_circuits(dsm_keep, segments)
+point_estimate %>% head
+
+```
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Bootstraps
+(dsm_formula <- summary(dsm_keep)$formula)
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Estimate log-normal group size
+mamu <- group_size_draw(mamu)
+
+# Note: how to handle uncertain zone boundaries?
+
+bootstraps <-
+  bootstrapper_wrapper(dsm_formula,
+                       segments,
+                       observation_data,
+                       B = 10,
+                       output_filename = NULL)
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+bootstraps %>% as.data.frame %>% head
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+################################################################################
+# Summary plots
+
+point_summary(point_estimate)
+
+bootstrapper_summary(bootstraps)
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(seabirds)
+mamu <-
+  seabirds %>%
+  filter(effort == 'transect') %>%
+  filter(zone != 'OUT') %>%
+  filter(sp1 == 'MAMU' | sp2 == 'MAMU' | sp3 == 'MAMU') %>%
+  filter(motion %in% c('FLY')) %>%
+  mutate(spp = 'MAMU')
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+data(flight_groups)
+flight_groups %>% head
+
+# Calculate flux correction factor
+mamu <- calculate_flight_flux(mamu, flight_groups)
+```
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+
+```
+
+
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+
+```
 

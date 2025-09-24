@@ -1,10 +1,10 @@
 Package: bangarang
 Type: Package
 Title: Bangarang data tools for the Kitimat Fjord System
-Version: 3.0
+Version: 3.1
 Date: 2024-01-23
-Authors@R: person("Eric", "Keen Ezell", email="ekeen@ucsd.edu",role=c("aut","cre"))
-Maintainer: Eric Keen <ekezell@sewanee.edu>
+Authors@R: person("Eric", "Keen Ezell", email="ekezell@sewanee.edu",role=c("aut","cre"))
+Maintainer: Eric Keen Ezell <ekezell@sewanee.edu>
 Description: Miscellaneous utilities & datasets (2013-2015) for marine research in 
     the Kitimat Fjord System, British Columbia (Gitga'at First Nation marine territory), 
     though some functions are applicable to the northeast Pacific coast in general. 
@@ -20,6 +20,8 @@ Imports:
     scales,
     sf,
     sp,
+    spatstat.explore,
+    spatstat.geom,
     swfscMisc (>= 1.0.3),
     tidyr,
     viridis
