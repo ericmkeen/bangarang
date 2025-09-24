@@ -19,7 +19,7 @@ group_size_draw <- function(sightings){
                             best)) %>% 
     mutate(best = best_ln) %>% 
     ungroup %>% 
-    select(-best_ln, )
+    select(-best_ln, -grp_data)
     
   return(sightings)
   

@@ -704,55 +704,71 @@ First, we store the formula used in the best-fit DSM:
 
 Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data:  
 
+
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 bootstraps <-
   bootstrapper_wrapper(dsm_formula,
                        segments,
                        observation_data,
-                       B = 10,
+                       grid,
+                       group_draw = FALSE,
+                       on_the_line = FALSE,
+                       B = 5,
                        output_filename = NULL)
 ```
 
+(See the documentation for that function for more help.)  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-# Estimate log-normal group size
-mamu <- group_size_draw(mamu)
-
-# Note: how to handle uncertain zone boundaries?
-
-bootstraps <-
-  bootstrapper_wrapper(dsm_formula,
-                       segments,
-                       observation_data,
-                       B = 10,
-                       output_filename = NULL)
-```
-
-See the documentation for that function for more help.  
-
-
+Take a look at the result ... 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 bootstraps %>% as.data.frame %>% head
-
 ```
 
-
+... which can be summarized using the function `bootstrapper_summary()`:
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-################################################################################
-# Summary plots
-
-point_summary(point_estimate)
-
 bootstrapper_summary(bootstraps)
+```
 
+That bootstrap result can be combined with the point estimates as follows: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+result <- 
+  left_join(point_summary(point_estimate) %>% select(-dsd),
+          (bootstrapper_summary(bootstraps) %>% select(circuit_name, SD, L95, U95)),
+          by='circuit_name') %>% 
+  mutate(CV = SD / dmean)
+
+result
+```
+
+This result can be plotted as follows: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+ggplot(result %>% 
+         mutate(circuit_name = factor(circuit_name, levels=circuit_name)),
+       aes(x=circuit_name,
+           y=dmean,
+           ymin=L95,
+           ymax=U95)) + 
+  geom_errorbar(width=.1) + 
+  geom_point() +
+  xlab(NULL) + 
+  ylab('Density') + 
+  theme_light()
 ```
 
 
+#### Flying birds
+
+Flying birds pose special challenges (see Spear & Ainley 1997). In order to account for the bias caused by the possibliity of repeat-counting a flying bird, we need to perform corrections that rely upon ship speed and direction; bird speed, direction and flight height; and published regressions that predict bird speed for different seabird groups at certain orientations to the wind and at certain heights above the water. 
+
+So first we get the flying murrelets in our dataset:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(seabirds)
+
 mamu <-
   seabirds %>%
   filter(effort == 'transect') %>%
@@ -760,44 +776,39 @@ mamu <-
   filter(sp1 == 'MAMU' | sp2 == 'MAMU' | sp3 == 'MAMU') %>%
   filter(motion %in% c('FLY')) %>%
   mutate(spp = 'MAMU')
+
+# Sample size
+mamu %>% nrow
 ```
 
-
+To account for the biases introduced by flying bird "flux", we bring in a built-in dataset that contains flight-wind regression data from Spear & Ainley (1997): 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(flight_groups)
+
 flight_groups %>% head
+```
 
-# Calculate flux correction factor
+We then use that regression data in the function `calculate_flight_flux()`, which scales group size by the flux correction factor (see that function's documentation for details):  
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+# Mean group size before flux correction
+mamu$best %>% mean(na.rm=TRUE)
+
+# Calculate flux correction
 mamu <- calculate_flight_flux(mamu, flight_groups)
+
+# Apply to group estimates
+mamu <- 
+  mamu %>% mutate(best = best * correction_factor,
+                  min = min * correction_factor,
+                  max = max * correction_factor)
+                  
+# Mean after
+mamu$best %>% mean(na.rm=TRUE)
 ```
 
+Now that flux is accounted for, you can proceed using the same method for sitting birds above. 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-
-```
-
-
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-
-```
-
-
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-
-```
-
-
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-
-```
-
-
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-
-```
+Total murrelet density will be the sum of sitting and flying birds.  
 

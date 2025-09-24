@@ -10,11 +10,12 @@
 calculate_flight_flux <- function(sightings,
                                   flight_groups){
   
-  mamu <- df
+  mamu <- sightings
   mamu <- 
     mamu %>%
     # change wind name
-    rename(wind_ms_raw = wind_kph_raw) %>%
+    mutate(wind_ms_raw = wind_kph_raw) %>%
+    #rename(wind_ms_raw = wind_kph_raw) %>%
     rowwise %>%
     
     # add flight speed group =====================================================

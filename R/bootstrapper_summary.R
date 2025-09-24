@@ -14,8 +14,10 @@ bootstrapper_summary <- function(bootstraps){
     summarize(dmean = mean(d)) %>%
     ungroup() %>%
     group_by(year, circuit, circuit_name, circuit_yday) %>%
-    summarize(L95 = quantile(dmean, .025),
-              U95 = quantile(dmean, .975))
+    summarize(SD = sd(dmean),
+              L95 = quantile(dmean, .025),
+              U95 = quantile(dmean, .975)) %>% 
+    ungroup
   bootstraps
   
   return(bootstraps)
