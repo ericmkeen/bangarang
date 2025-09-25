@@ -1,8 +1,13 @@
 ---
 title: "`R` package `bangarang`"
-output: html_document
 author: Eric Keen Ezell
-date: "2024-01-24"
+date: "2025-09-22"
+output: 
+  html_document:
+    theme: flatly
+    toc: yes
+    toc_float:
+      collapsed: true
 ---
 
 ```{r setup, include=FALSE}
@@ -693,13 +698,13 @@ d_circuits <-
 
 We can use the function `point_summary()` to calculate average density across the DSM: 
 
-```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 point_summary(d_circuits)
 ```
 
 Here is a plot of it: 
 
-```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 gg_kfs() + 
   geom_point(data=d_circuits %>% mutate(ds=d),
              mapping=aes(x=x, y=y, color=ds), pch=15) + 
@@ -756,9 +761,9 @@ bootstrapper_summary(bootstraps)
 
 That bootstrap result can be combined with the point estimates as follows: 
 
-```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 result <- 
-  left_join(point_summary(point_estimate) %>% select(-dsd),
+  left_join(point_summary(d_circuits) %>% select(-dsd),
           (bootstrapper_summary(bootstraps) %>% select(circuit_name, SD, L95, U95)),
           by='circuit_name') %>% 
   mutate(CV = SD / dmean)
@@ -768,7 +773,7 @@ result
 
 This result can be plotted as follows: 
 
-```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 ggplot(result %>% 
          mutate(circuit_name = factor(circuit_name, levels=circuit_name)),
        aes(x=circuit_name,
@@ -831,7 +836,8 @@ mamu <-
 mamu$best %>% mean(na.rm=TRUE)
 ```
 
-Now that flux is accounted for, you can proceed using the same method for sitting birds above. 
+Now that flux is accounted for, you can proceed using the same method for sitting birds above.  
+
 
 Total murrelet density will be the sum of sitting and flying birds.  
 
