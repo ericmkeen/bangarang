@@ -8,8 +8,12 @@ bootstrapper_wrapper(
   dsm_formula,
   segments,
   observation_data,
+  grid,
+  group_draw = TRUE,
+  on_the_line = FALSE,
   B = 1000,
-  output_filename = "bootstraps"
+  output_filename = "bootstraps",
+  toplot = FALSE
 )
 }
 \arguments{
@@ -19,10 +23,19 @@ bootstrapper_wrapper(
 
 \item{observation_data}{Formatted observation (sightings) data}
 
+\item{grid}{Grid dataframe (see `data(grid)`)}
+
+\item{group_draw}{`TRUE` or `FALSE`: incorporate uncertainty 
+from min-max-best group size uncertainty using a draw from a truncated log-normal distribution?}
+
+\item{on_the_line}{`TRUE` or `FALSE`: incorporate uncertainty from sightings that occur on the outside boundary of the strip?}
+
 \item{B}{Number of iterations}
 
 \item{output_filename}{If you want the result to be saved to a data file in 
 your working directory, specify filename here. File type will be `.rds`.}
+
+\item{toplot}{True or False}
 }
 \value{
 Dataframe of bootstrap results.

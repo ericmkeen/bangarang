@@ -1,14 +1,15 @@
 #' Predict DSM densities for each circuit of effort
-#' 
+#'
 #' @param dsm_keep DSM model object to use.
 #' @param segments Dataframe of segment summary data.
-#' @param grid Grid dataframe (see `data(grid)`)
-#' @param circuits Dataframe with start/end timestamps for each circuit. See `data(circuit)` for reference. 
+#' @param grid Grid dataframe: see `data(grid)`
+#' @param circuits Dataframe with start/end timestamps for each circuit. See `data(circuit)` for reference.  
 #' @param cex_scale Scale points on DSM maps to be more legible using a number (1 = no scaling).
 #' @param toplot `TRUE` or `FALSE`?
 #'
 #' @return A dataframe with the grid replicated for each circuit, with an additional column, 
-#' `d`, containing the density estimate for each grid-cell in each circuit. 
+#' `d`, containing the density estimate for each grid-cell in each circuit.  
+#' 
 #' @export
 #'
 predict_circuits <- function(dsm_keep, 

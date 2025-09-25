@@ -4,7 +4,7 @@
 \alias{predict_dsm_kfs}
 \title{Predict density surface for segments using `dsm` model}
 \usage{
-predict_dsm_kfs(dsm_keep, segments, grid, cex_scale = 1, toplot = TRUE)
+predict_dsm_kfs(dsm_keep, segments, grid, cex_scale = 1, toplot = FALSE)
 }
 \arguments{
 \item{dsm_keep}{Model object to use for prediction}
