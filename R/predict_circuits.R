@@ -16,7 +16,7 @@ predict_circuits <- function(dsm_keep,
                              grid,
                              circuits = NULL,
                              cex_scale = 1, 
-                             toplot=TRUE){
+                             toplot=FALSE){
   
   segs <- segments
   

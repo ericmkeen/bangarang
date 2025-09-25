@@ -7,6 +7,7 @@ date: "2024-01-24"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+rerun_from_scratch <- FALSE
 ```
 
 The `bangarang` package is a bundle of datasets and functions that help analysts with research in the Kitimat Fjord System (KFS) in the north coast of mainland British Columbia. Nearly all of the content is catered specifically to analysis of datasets from the *RV Bangarang* expedition of 2013 - 2015, which was focused on the abundance, distribution, and foraging ecology of whales, seabirds, salmon, and their prey during the months of summer and early fall. The research involved line-transect sampling, active acoustic (echosounder) surveys, and oceanographic sampling (both while underway and at a grid of stations).  
@@ -37,7 +38,8 @@ library(bangarang)
 This vignette was made with `bangarang` version `r utils::packageVersion('LTabundR')`, and will make use of a few other packages: 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 library(ggplot2)
 ```
 
@@ -629,28 +631,12 @@ d <- predict_dsm_kfs(dsm_basic, segments, grid)
 That function, `predict_dsm_kfs()`, returns a vector of density estimates (birds km^-2) equal in length to the number of rows in the `grid` `data.frame`.  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-d %>% hist
+gg_kfs() + 
+  geom_point(data=grid %>% mutate(ds=d),
+             mapping=aes(x=x, y=y, color=ds), pch=15) + 
+  scale_color_viridis_c(trans='log', breaks=c(0.02, .2, 2, 20))
 ```
 
-You can also use a wrapper function, `predict_circuits()`, to predict the density surface during each circuit of the study area. We completed a total of 9 circuits whose information is contained in the built-in dataset `data(circuits)`:  
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-data(circuits)
-
-circuits %>% head
-
-d_circuits <- 
-  predict_circuits(dsm_basic, 
-                   segments,
-                   grid,
-                   toplot=FALSE)
-```
-
-We can use the function `point_summary()` to calculate average density across the DSM: 
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-point_summary(d_circuits)
-```
 
 ##### Model selection
 
@@ -683,13 +669,39 @@ And we will save that model object as our model to keep:
 dsm_keep <- dsm_comps$objects[[7]]
 ```
 
-And we will re-run our point estimate using that model:  
+Our best-fit model involves date components. So, to produce the point estimate, we will use a wrapper function, `predict_circuits()`, to predict the density surface during each circuit of the study area. We completed a total of 9 circuits whose information is contained in the built-in dataset `data(circuits)`:  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-point_estimate <-
-  predict_circuits(dsm_keep, segments, grid, toplot=FALSE)
+data(circuits)
 
-point_summary(point_estimate)
+circuits %>% head
+```
+
+We now rerun the model: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+d_circuits <- 
+  predict_circuits(dsm_keep, 
+                   segments,
+                   grid,
+                   toplot=FALSE)
+```
+
+We can use the function `point_summary()` to calculate average density across the DSM: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+point_summary(d_circuits)
+```
+
+Here is a plot of it: 
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+gg_kfs() + 
+  geom_point(data=d_circuits %>% mutate(ds=d),
+             mapping=aes(x=x, y=y, color=ds), pch=15) + 
+  scale_color_viridis_c(trans='log', breaks=c(0.01, .1, 1, 10, 100)) + 
+  facet_wrap(~circuit_name) + 
+  xlab(NULL) + ylab(NULL) + labs(color='Density')
 ```
 
 ##### Variance estimation
@@ -702,22 +714,29 @@ First, we store the formula used in the best-fit DSM:
 (dsm_formula <- summary(dsm_keep)$formula)
 ```
 
-Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data:  
+Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data. (Here we only perform 50 bootstrap iterations, but the norm is typically 1,000 or more -- prepare for an overnight run!).  
 
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
 bootstraps <-
   bootstrapper_wrapper(dsm_formula,
                        segments,
                        observation_data,
                        grid,
-                       group_draw = FALSE,
+                       group_draw = TRUE,
                        on_the_line = FALSE,
-                       B = 5,
+                       B = 50,
                        output_filename = NULL)
 ```
 
-(See the documentation for that function for more help.)  
+```{r echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
+save(bootstraps, file='demo_boots.rds')
+```
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+load('demo_boots.rds')
+```
+
+*(See the documentation for that function for more help.) * 
 
 Take a look at the result ... 
 
