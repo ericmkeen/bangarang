@@ -592,7 +592,7 @@ whalemap(X= -129.2,
 
 ### Seabird density estimation
 
-To showcase some other functions in the `bangarang` package, here is an example workflow for estimating the density/abundance of a seabird from the *Bangarang* study area. I use a density-surface-modeling (DSM) approach based on the `R` package `dsm` ([Github](https://github.com/DistanceDevelopment/dsm)). In a DSM, species density is estimated for each point in a grid of your study area. The `bangarang` package provides a 1-square-km grid as a built-in dataset: 
+To showcase some other functions in the `bangarang` package, here is an example workflow for estimating the density/abundance of a seabird from the *Bangarang* study area. I use a density-surface-modeling (DSM) approach based on the `R` package `dsm` ([Github](https://github.com/DistanceDevelopment/dsm)). In a DSM, species density is estimated for each point in a grid of your study area. The `bangarang` package provides a 1-km^2^ grid as a built-in dataset: 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(grid, package='bangarang')
@@ -626,7 +626,7 @@ gg_kfs() +
 
 #### Sitting & flushed birds 
 
-We then filter the built-in sightings dataset, `"seabirds"`, to our species of interest. In this case, marbled murrelet (4-letter code: "MAMU"). We will analyze sitting birds separately from flying birds, since the former will be relevant to subsequent foraging preference analyses. 
+We then filter the built-in sightings dataset, `"seabirds"`, to our species of interest. In this case, marbled murrelet (4-letter code: "MAMU"). We will analyze sitting/flushed birds separately from flying birds, since the former will be relevant to subsequent foraging preference analyses. 
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(seabirds)
@@ -699,7 +699,7 @@ We then use that DSM to predict murrelet density on our spatial grid:
 d <- predict_dsm_kfs(dsm_basic, segments, grid)
 ```
 
-That function, `predict_dsm_kfs()`, returns a vector of density estimates (birds km^-2) equal in length to the number of rows in the `grid` `data.frame`.  
+That function, `predict_dsm_kfs()`, returns a vector of density estimates (birds km^-2^) equal in length to the number of rows in the `grid` `data.frame`.  
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 gg_kfs() + 
@@ -713,7 +713,7 @@ gg_kfs() +
 
 ##### Model selection
 
-To improve the DSM model, you can introduce covariates from your `segments` dataset.  The `bangarang` package provides a function, `dsm_comps()`, that will ues AICc to rank candidate models for all possible combinations of the supplied covariates. The analyst can then decide which formula to bring into the density estimation stage. The assumed distribution family is `"tweedie"`.    
+To improve the DSM model, you can introduce covariates from your `segments` dataset.  The `bangarang` package provides a function, `dsm_comps()`, that will use *AICc* to rank candidate models for all possible combinations of the supplied covariates. The analyst can then decide which formula to bring into the density estimation stage. The assumed distribution family is `"tweedie"`.    
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 dsm_comps <- 
@@ -777,6 +777,13 @@ gg_kfs() +
   xlab(NULL) + ylab(NULL) + labs(color='Density')
 ```
 
+To convert this DSM density estimate to a total abundance estimate, we take the average density of the grid and multiply it by the study area:
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+point_summary(d_circuits) %>% 
+  mutate(N = round(dmean * sum(grid$km2)))
+```
+
 <br>
 
 ##### Variance estimation
@@ -789,7 +796,7 @@ First, we store the formula used in the best-fit DSM:
 (dsm_formula <- summary(dsm_keep)$formula)
 ```
 
-Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data. (Here we only perform 50 bootstrap iterations, but the norm is typically 1,000 or more -- prepare for an overnight run!).  
+Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data. (The norm is typically 1,000 or more bootstrap iterations or more -- prepare for a multi-hour run! I recommend trying this out with just 50 iterations at first to confirm that the results make sense before investing in the full-fledged run -- bird pun intended!).  
 
 ```{r bootstrap, echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
 bootstraps <-
@@ -799,12 +806,13 @@ bootstraps <-
                        grid,
                        group_draw = TRUE,
                        on_the_line = FALSE,
-                       B = 50,
+                       B = 1000,
                        output_filename = NULL)
 ```
 
-```{r echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
-save(bootstraps, file='demo_boots.rds')
+```{r echo=FALSE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
+bootsumm <- bootstrapper_summary(bootstraps)
+save(bootsumm, file='demo_boots.rds')
 ```
 
 ```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
@@ -813,24 +821,32 @@ load('demo_boots.rds')
 
 *(See the documentation for that function for more help.) * 
 
-Take a look at the result ... 
+These results be summarized using the function `bootstrapper_summary()`:
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-bootstraps %>% as.data.frame %>% head
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+bootstrapper_summary(bootstraps)
 ```
 
-... which can be summarized using the function `bootstrapper_summary()`:
-
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
-bootstrapper_summary(bootstraps)
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE}
+bootsumm
 ```
 
 That bootstrap result can be combined with the point estimates as follows: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 result <- 
   left_join(point_summary(d_circuits) %>% select(-dsd),
           (bootstrapper_summary(bootstraps) %>% select(circuit_name, SD, L95, U95)),
+          by='circuit_name') %>% 
+  mutate(CV = SD / dmean)
+
+result
+```
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, message=FALSE}
+result <- 
+  left_join(point_summary(d_circuits) %>% select(-dsd),
+          (bootsumm %>% select(circuit_name, SD, L95, U95)),
           by='circuit_name') %>% 
   mutate(CV = SD / dmean)
 
@@ -846,8 +862,8 @@ ggplot(result %>%
            y=dmean,
            ymin=L95,
            ymax=U95)) + 
-  geom_errorbar(width=.1) + 
-  geom_point() +
+  geom_errorbar(width=.1, color='grey40') + 
+  geom_point(size=2.5) +
   xlab(NULL) + 
   ylab('Density') + 
   theme_light()
