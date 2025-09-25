@@ -18,7 +18,7 @@ Methodological details can be found [here](https://www.proquest.com/openview/80b
 
 The `bangarang` package can be downloaded directly from `GitHub`:
 
-```{r echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=FALSE}
 # Install devtools if needed
 if (!require('devtools')) install.packages('devtools')
 
@@ -29,15 +29,19 @@ options(timeout=9999999)
 devtools::install_github('ericmkeen/bangarang')
 ```
 
+```{r, echo=FALSE, eval=FALSE}
+devtools::install_local()
+```
+
 Load into your `R` session:  
 
-```{r echo=TRUE, eval=TRUE}
+```{r, echo=TRUE, eval=TRUE}
 library(bangarang)
 ```
 
 This vignette was made with `bangarang` version `r utils::packageVersion('LTabundR')`, and will make use of a few other packages: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -47,13 +51,13 @@ library(ggplot2)
 
 Produce a map of the *Bangarang* study area in the KFS using the `ggplot` and `sf` packages:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 gg_kfs()
 ```
 
 As with all the `bangarang` functions, see this function's documentation for changing the geographic range, color, and transparency settings. 
 
-```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 ?gg_kfs
 ```
 
@@ -62,11 +66,11 @@ As with all the `bangarang` functions, see this function's documentation for cha
 
 #### Land
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(kfs_land)
 ```
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 kfs_land %>% class
 
 kfs_land %>% glimpse
@@ -74,14 +78,14 @@ kfs_land %>% glimpse
 
 Snapshot of dataset: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 4, fig.height=4}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 4, fig.height=4}
 par(mar=c(.1,.1,.1,.1))
 kfs_land %>% plot
 ```
 
 #### Seafloor 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(kfs_seafloor)
 
 kfs_seafloor %>% glimpse
@@ -89,7 +93,7 @@ kfs_seafloor %>% glimpse
 
 Plot it:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 ggplot(kfs_seafloor,
        aes(x=x, y=y, color=layer)) + 
   geom_point(size=.1) + 
@@ -99,7 +103,7 @@ ggplot(kfs_seafloor,
 
 #### Proposed LNG shipping routes
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 data(shiplane)
 
 shiplane %>% glimpse
@@ -107,7 +111,7 @@ shiplane %>% glimpse
 
 Plot it:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width = 6, fig.height=6}
 gg_kfs() + 
   geom_path(data=shiplane,
             mapping=aes(x=X, y=Y, group=PID)) + 
@@ -118,7 +122,7 @@ gg_kfs() +
 
 ##### Four main "provinces" referenced in study
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(provinces)
 
 provinces %>% glimpse
@@ -126,7 +130,7 @@ provinces %>% glimpse
 
 Check it out:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_polygon(data=provinces,
             mapping=aes(x=X, 
@@ -141,7 +145,7 @@ gg_kfs() +
 
 ##### Eight main channels referenced in study
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(channels)
 
 channels %>% glimpse
@@ -149,7 +153,7 @@ channels %>% glimpse
 
 Check it out:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_polygon(data=channels,
             mapping=aes(x=X, 
@@ -162,7 +166,7 @@ gg_kfs() +
 
 ##### Rectangular blocks (medium size). 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(kfs_blocks_bbox)
 
 kfs_blocks_bbox %>% glimpse
@@ -170,7 +174,7 @@ kfs_blocks_bbox %>% glimpse
 
 Check it out:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_rect(data=kfs_blocks_bbox,
             mapping=aes(xmin=left, 
@@ -185,7 +189,7 @@ gg_kfs() +
 
 ##### Rectangular blocks (small size). 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(blocks)
 
 blocks %>% glimpse
@@ -193,7 +197,7 @@ blocks %>% glimpse
 
 Check it out:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_rect(data=blocks,
             mapping=aes(xmin=left, 
@@ -209,7 +213,7 @@ gg_kfs() +
 
 #### Oceanographic stations 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(stations)
 
 stations %>% glimpse
@@ -217,7 +221,7 @@ stations %>% glimpse
 
 Check it out:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_point(data=stations,
             mapping=aes(x=long, 
@@ -231,7 +235,7 @@ gg_kfs() +
 
 All survey effort aboard the *Bangarang*:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(effort)
 
 effort %>% glimpse
@@ -239,7 +243,7 @@ effort %>% glimpse
 
 Map overview:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_point(data=effort,
             mapping=aes(x=lon, 
@@ -252,7 +256,7 @@ gg_kfs() +
 
 Show each year separately: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 gg_kfs() + 
   geom_point(data=effort,
             mapping=aes(x=lon, 
@@ -269,7 +273,7 @@ gg_kfs() +
 
 Show each circuit in 2015 separately, systematic transect effort only:  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 # Filter to transect effort only
 transects <- 
   effort %>% 
@@ -293,7 +297,7 @@ gg_kfs() +
 
 #### Seabirds 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(seabirds)
 
 seabirds %>% glimpse
@@ -301,7 +305,7 @@ seabirds %>% glimpse
 
 Map it: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
 gg_kfs() + 
   geom_point(data=seabirds,
             mapping=aes(x=lon, 
@@ -376,7 +380,7 @@ Column definitions:
 
 #### Salmon 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(salmon)
 
 salmon %>% glimpse
@@ -384,7 +388,7 @@ salmon %>% glimpse
 
 Map it;  
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_point(data=salmon,
             mapping=aes(x=lon, 
@@ -395,7 +399,7 @@ gg_kfs() +
 ```
 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 ggplot(salmon %>% 
          filter(zone < 3) %>% 
          mutate(Zone = factor(zone)),
@@ -406,13 +410,13 @@ ggplot(salmon %>%
 
 #### Whales 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 data(whale_sightings)
 
 whale_sightings %>% glimpse
 ```
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
+```{r, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, fig.width=6, fig.height=6}
 gg_kfs() + 
   geom_point(data=whale_sightings,
             mapping=aes(x=x, 
@@ -679,7 +683,7 @@ circuits %>% head
 
 We now rerun the model: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r predict_circuits_1, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
 d_circuits <- 
   predict_circuits(dsm_keep, 
                    segments,
@@ -689,13 +693,13 @@ d_circuits <-
 
 We can use the function `point_summary()` to calculate average density across the DSM: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 point_summary(d_circuits)
 ```
 
 Here is a plot of it: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 gg_kfs() + 
   geom_point(data=d_circuits %>% mutate(ds=d),
              mapping=aes(x=x, y=y, color=ds), pch=15) + 
@@ -716,7 +720,7 @@ First, we store the formula used in the best-fit DSM:
 
 Next, we can use the function `bootstrapper_wrapper()` to repeat the circuit density prediction routine with iteratively resampled versions of the segments and sightings data. (Here we only perform 50 bootstrap iterations, but the norm is typically 1,000 or more -- prepare for an overnight run!).  
 
-```{r echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
+```{r bootstrap, echo=TRUE, eval=rerun_from_scratch, warning=FALSE, message=FALSE}
 bootstraps <-
   bootstrapper_wrapper(dsm_formula,
                        segments,
@@ -752,7 +756,7 @@ bootstrapper_summary(bootstraps)
 
 That bootstrap result can be combined with the point estimates as follows: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 result <- 
   left_join(point_summary(point_estimate) %>% select(-dsd),
           (bootstrapper_summary(bootstraps) %>% select(circuit_name, SD, L95, U95)),
@@ -764,7 +768,7 @@ result
 
 This result can be plotted as follows: 
 
-```{r echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE}
+```{r echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE}
 ggplot(result %>% 
          mutate(circuit_name = factor(circuit_name, levels=circuit_name)),
        aes(x=circuit_name,
